@@ -1,0 +1,239 @@
+// SAWZipNG.idl : IDL source for SAWZipNG.dll
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (SAWZipNG.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+typedef [v1_enum]
+enum OpenMode
+{
+  [helpstring("Open an existing archive")]
+   OM_OPEN = 0,
+  [helpstring("Open an existing archive as read only file")]
+   OM_READONLY = 1
+} tagOpenMode;
+
+typedef [v1_enum]
+enum CreateMode
+{
+  [helpstring("Create a new archive")]
+   CM_CREATE = 0,
+  [helpstring("Create a disk spanning archive")]
+   CM_CREATE_SPAN = 1
+} tagCreateMode;
+
+typedef [v1_enum]
+enum FFCaseSensitivity
+{
+  [helpstring("Use default as set with SetCaseSensitivity")]
+   FF_DEFAULT = 0,
+  [helpstring("Perform a case-sensitive search")]
+   FF_SENSITIVE = 1,
+  [helpstring("Perorm a non case-sensitive search")]
+   FF_NON_SENSITIVE = 2
+} tagFFCaseSensitivity;
+
+typedef [v1_enum]
+enum Smartness 
+{ 
+  [helpstring("Do not bother")]
+   SM_LAZY = 0x0000,
+  [helpstring("Clear password for directories")]
+   SM_CPASSDIR = 0x0001,
+  [helpstring("Clear password for files with size 0")]
+   SM_CPFILE = 0x0002,
+  [helpstring("Do not compress files smaller than 5 bytes")]
+   SM_NOT_COMP_SMALL = 0x0004, 
+  [helpstring("check whether the compressed file is larger than uncompressed and if so, remove it and store without the compression")]
+   SM_CHECK_FOR_EFF = 0x0008,
+  [helpstring("")]
+   SM_MEMORY_FLAG = 0x0010,
+  [helpstring("")]
+   SM_CHECK_FOR_EFF_IN_MEM = SM_MEMORY_FLAG | SM_CHECK_FOR_EFF,
+  [helpstring("")]
+   SM_SMART_PASS = SM_CPASSDIR | SM_CPFILE, 
+  [helpstring("")]
+   SM_SMART_ADD = SM_NOT_COMP_SMALL | SM_CHECK_FOR_EFF,
+  [helpstring("")]
+   SM_SMART_SAFE = SM_SMART_PASS | SM_NOT_COMP_SMALL,
+  [helpstring("")]
+   SM_SMART_TEST = SM_SMART_PASS | SM_SMART_ADD
+} tagSmartness;
+
+typedef [v1_enum]
+enum Platform
+{
+  [helpstring("MS-DOS and OS/2 (FAT / VFAT / FAT32 file systems")]
+   ZP_DOS_FAT,
+  [helpstring("Amiga")]
+   ZP_AMIGA,
+  [helpstring("VAX/VMS")]
+   ZP_VAX_VMS,
+  [helpstring("Unix/Linux")]
+   ZP_UNIX,
+  [helpstring("VM/CMS")]
+   ZP_VM_CMS,
+  [helpstring("Atari ST")]
+   ZP_ATARI,
+  [helpstring("OS/2 H.P.F.S.")]
+   ZP_OS2_HPFS,
+  [helpstring("Macintosh")]
+   ZP_MAC, 
+  [helpstring("Z-System")]
+   ZP_Z_SYSTEM,
+  [helpstring("CP/M")]
+   ZP_CP_M,
+  [helpstring("Windows NTFS.")]
+   ZP_NTFS,
+} tagZipPlatform;
+
+typedef [v1_enum]
+enum SpanMode
+{
+  [helpstring("Existing TD mode compatible disk spanning archive")]
+   SPM_EXIST_TD = -2,
+  [helpstring("Existing PKZIP compatible")]
+   SPM_EXIST_PKZIP = -1,
+  [helpstring("No disk spanning")]
+   SPM_NO = 0,
+  [helpstring("PKZIP compatible in creation")]
+   SPM_CREATE_PKZIP = 1,
+  [helpstring("TD compatible in creation")]
+   SPM_CREATE_TD = 2,
+} tagSpanMode;
+
+
+interface IFileInfo;
+
+	[
+		object,
+		uuid(D4C11DAF-8B64-11D7-923B-000000000000),
+		dual,
+		helpstring("IArchive Interface"),
+		pointer_default(unique)
+	]
+	interface IArchive : IDispatch
+	{
+		[id(1), helpstring("open an archive file")] HRESULT Open([in] BSTR filename, [in, optional, defaultvalue(OM_OPEN)] tagOpenMode openMode, [in, optional, defaultvalue(0)] int volumeSize);
+		[propget, id(2), helpstring("Is this archive readonly?")] HRESULT ReadOnly([out, retval] VARIANT_BOOL *pVal);
+		[propget, id(3), helpstring("Number of files in the archive")] HRESULT FileCount([out, retval] long *pVal);
+		[propget, id(4), helpstring("Number of directories in the archive")] HRESULT DirCount([out, retval] long *pVal);
+		[propget, id(5), helpstring("Number of files and directories in the archive")] HRESULT Count([out, retval] long *pVal);
+		[id(6), helpstring("Close the archive")] HRESULT Close();
+		[propget, id(7), helpstring("Is this archive opened or closed?")] HRESULT Closed([out, retval] VARIANT_BOOL *pVal);
+		[id(8), helpstring("Gets a FileInfo object")] HRESULT GetFileInfo([in] long index, [out, retval] IFileInfo **fi);
+		[id(9), helpstring("Create a new archive")] HRESULT Create([in] BSTR filename, [in, optional, defaultvalue(CM_CREATE)] tagCreateMode createMode, [in, optional, defaultvalue(0)] int volumeSize);
+		[propget, id(10), helpstring("Root path")] HRESULT RootPath([out, retval] BSTR *pVal);
+		[propput, id(10), helpstring("Root path")] HRESULT RootPath([in] BSTR newVal);
+		[id(11), helpstring("Adds a file to the archive")] HRESULT AddFile([in] BSTR filename, [in, optional, defaultvalue(1)] VARIANT_BOOL fullpath, [in, optional, defaultvalue(-1)] short level, [in, optional, defaultvalue(SM_SMART_SAFE)] tagSmartness smartLevel, [in, optional, defaultvalue(65536)] long bufferSize, [out, retval] VARIANT_BOOL *result);
+		[id(12), helpstring("Adds a file to the archive with another name")] HRESULT AddFileAs([in] BSTR filename, [in] BSTR nameInZip, [in, optional, defaultvalue(-1)] short level, [in, optional, defaultvalue(SM_SMART_SAFE)] tagSmartness smartLevel, [in, optional, defaultvalue(65536)] long bufferSize, [out, retval] VARIANT_BOOL *result);
+		[id(13), helpstring("Extracts a file from the archive")] HRESULT Extract([in] long index, [in] BSTR path, [in, optional, defaultvalue(1)] VARIANT_BOOL fullpath, [in, optional, defaultvalue(65536)] long bufferSize, [out, retval] VARIANT_BOOL *result);
+		[id(14), helpstring("method ExtractAs")] HRESULT ExtractAs([in] long index, [in] BSTR path, [in] BSTR newName, [in, optional, defaultvalue(1)] VARIANT_BOOL fullpath, [in, optional, defaultvalue(65536)] long bufferSize, [out, retval] VARIANT_BOOL *result);
+		[propget, id(15), helpstring("Password for the file that will be extracted or added")] HRESULT Password([out, retval] BSTR *pVal);
+		[propput, id(15), helpstring("Password for the file that will be extracted or added")] HRESULT Password([in] BSTR newVal);
+		[id(16), helpstring("method PredictExtractedFileName")] HRESULT PredictExtractedFileName([in] BSTR FileNameInZip, [in] BSTR Path, [in] VARIANT_BOOL FullPath, [in] BSTR NewName, [out, retval] BSTR* result);
+		[id(17), helpstring("method TestFile")] HRESULT TestFile([in] long index, [in, optional, defaultvalue(65536)] long bufferSize, [out, retval] VARIANT_BOOL *result);
+		[propget, id(18), helpstring("property WriteBufferSize")] HRESULT WriteBufferSize([out, retval] long *pVal);
+		[propput, id(18), helpstring("property WriteBufferSize")] HRESULT WriteBufferSize([in] long newVal);
+		[propget, id(19), helpstring("property GeneralBufferSize")] HRESULT GeneralBufferSize([out, retval] long *pVal);
+		[propput, id(19), helpstring("property GeneralBufferSize")] HRESULT GeneralBufferSize([in] long newVal);
+		[propget, id(20), helpstring("property SearchBufferSize")] HRESULT SearchBufferSize([out, retval] long *pVal);
+		[propput, id(20), helpstring("property SearchBufferSize")] HRESULT SearchBufferSize([in] long newVal);
+		[propget, id(21), helpstring("property Comment")] HRESULT Comment([out, retval] BSTR *pVal);
+		[id(30), helpstring("method FindFile")] HRESULT FindFile([in] BSTR filename, [in, optional, defaultvalue(FF_DEFAULT)] tagFFCaseSensitivity caseSensitive, [in, optional, defaultvalue(0)] VARIANT_BOOL filenameOnly, [out, retval] long *index);
+		[propput, id(21), helpstring("property Comment")] HRESULT Comment([in] BSTR newVal);
+		[propget, id(22), helpstring("property AutoFlush")] HRESULT AutoFlush([out, retval] VARIANT_BOOL *pVal);
+		[propput, id(22), helpstring("property AutoFlush")] HRESULT AutoFlush([in] VARIANT_BOOL newVal);
+		[id(23), helpstring("method Flush")] HRESULT Flush();
+		[id(24), helpstring("method AddFolder")] HRESULT AddFolder([in] BSTR foldername, [in, optional, defaultvalue(1)] VARIANT_BOOL includeSubDirs, [in, optional, defaultvalue(1)] VARIANT_BOOL fullpath, [in, optional, defaultvalue(-1)] short level, [in, optional, defaultvalue(SM_SMART_SAFE)] tagSmartness smartLevel, [in, optional, defaultvalue(65536)] long bufferSize, [out, retval] VARIANT_BOOL *result);
+		[id(25), helpstring("method AddFolderWithWildcard")] HRESULT AddFolderWithWildcard([in] BSTR foldername, [in] BSTR wildcard, [in, optional, defaultvalue(1)] VARIANT_BOOL includeSubDirs, [in, optional, defaultvalue(1)] VARIANT_BOOL fullPath, [in, optional, defaultvalue(-1)] short level, [in, optional, defaultvalue(SM_SMART_SAFE)] tagSmartness smartLevel, [in, optional, defaultvalue(65536)] long bufferSize, [out, retval] VARIANT_BOOL *result);
+		[id(26), helpstring("method DeleteFile")] HRESULT DeleteFile([in] long index);
+		[id(27), helpstring("method DeleteFiles")] HRESULT DeleteFiles([in] VARIANT indexes);
+		[id(28), helpstring("method FindFiles")] HRESULT FindFiles([in] BSTR Pattern, [in, optional, defaultvalue(1)] VARIANT_BOOL Fullpath, [out, retval] VARIANT *indexes);
+		[propget, id(29), helpstring("property IgnoreCrc")] HRESULT IgnoreCrc([out, retval] VARIANT_BOOL *pVal);
+		[propput, id(29), helpstring("property IgnoreCrc")] HRESULT IgnoreCrc([in] VARIANT_BOOL newVal);
+		[id(31), helpstring("method GetIndexes")] HRESULT GetIndexes([in] VARIANT filenames, [out, retval] VARIANT *indexes);
+		[propget, id(32), helpstring("property ArchivePath")] HRESULT ArchivePath([out, retval] BSTR *pVal);
+		[id(33), helpstring("method SetFileComment")] HRESULT SetFileComment([in] long index, [in] BSTR comment);
+		[propget, id(34), helpstring("property SystemCompatibility")] HRESULT SystemCompatibility([out, retval] tagZipPlatform *pVal);
+		[propput, id(34), helpstring("property SystemCompatibility")] HRESULT SystemCompatibility([in] tagZipPlatform newVal);
+		[propget, id(35), helpstring("property TempPath")] HRESULT TempPath([out, retval] BSTR *pVal);
+		[propput, id(35), helpstring("property TempPath")] HRESULT TempPath([in] BSTR newVal);
+		[id(36), helpstring("method PredictFileNameInZip")] HRESULT PredictFileNameInZip([in] BSTR FileName, [in, optional, defaultvalue(1)] VARIANT_BOOL FullPath, [in, optional, defaultvalue(0)] VARIANT_BOOL Exact, [out, retval] BSTR *FileNameInZip);
+		[id(37), helpstring("method WillBeDuplicated")] HRESULT WillBeDuplicated([in] BSTR FilePath, [in, optional, defaultvalue(1)] VARIANT_BOOL FullPath, [in, optional, defaultvalue(0)] VARIANT_BOOL FileNameOnly, [out, retval] long *index);
+		[propget, id(38), helpstring("property CurrentDisk")] HRESULT CurrentDisk([out, retval] short *pVal);
+		[propget, id(39), helpstring("property SpanMode")] HRESULT SpanMode([out, retval] tagSpanMode *pVal);
+		[propget, id(40), helpstring("property EnableFindFast")] HRESULT EnableFindFast([out, retval] VARIANT_BOOL *pVal);
+		[propput, id(40), helpstring("property EnableFindFast")] HRESULT EnableFindFast([in] VARIANT_BOOL newVal);
+		[id(41), helpstring("method RenameFile")] HRESULT RenameFile([in] long index, [in] BSTR newFilename, [out, retval] VARIANT_BOOL *result);
+		[propget, id(42), helpstring("property CaseSensitivity")] HRESULT CaseSensitivity([out, retval] VARIANT_BOOL *pVal);
+		[propput, id(42), helpstring("property CaseSensitivity")] HRESULT CaseSensitivity([in] VARIANT_BOOL newVal);
+	}; 
+
+[
+	uuid(D4C11DA3-8B64-11D7-923B-000000000000),
+	version(1.0),
+	helpstring("SAWZipNG 1.0 Type Library")
+]
+library SAWZipNG
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	[
+		uuid(D4C11DB1-8B64-11D7-923B-000000000000),
+		helpstring("_IArchiveEvents Interface")
+	]
+	dispinterface _IArchiveEvents
+	{
+		properties:
+		methods:
+		[id(1), helpstring("Fired when a file is added to the archive")] HRESULT OnAdd([in] BSTR filename, [in] long soFar, [in] long ToDo, [in, out] VARIANT_BOOL* Cancel);
+		[id(2), helpstring("Fired when a file is extracted")] HRESULT OnExtract([in] BSTR filename, [in] long soFar, [in] long toDo, [in, out] VARIANT_BOOL* Cancel);
+		[id(3), helpstring("Fired when a file is deleted")] HRESULT OnDelete([in] BSTR filename, [in] long soFar, [in] long toDo, [in, out] VARIANT_BOOL* Cancel);
+		[id(4), helpstring("Fired when a file is stored")] HRESULT OnStore([in] BSTR filename, [in] long soFar, [in] long toDo, [in, out] VARIANT_BOOL* Cancel);
+		[id(5), helpstring("Fired when a disk is needed")] HRESULT OnDiskNeeded([in] long disk, [in, out] VARIANT_BOOL* Cancel);
+	};
+	[
+		object,
+		uuid(D4C11DB4-8B64-11D7-923B-000000000000),
+		dual,
+		helpstring("IFileInfo Interface"),
+		pointer_default(unique)
+	]
+	interface IFileInfo : IDispatch
+	{
+		[propget, id(1), helpstring("Filename")] HRESULT Filename([out, retval] BSTR *pVal);
+		[propput, id(1), helpstring("Filename")] HRESULT Filename([in] BSTR newVal);
+		[propget, id(2), helpstring("Comment")] HRESULT Comment([out, retval] BSTR *pVal);
+		[propput, id(2), helpstring("Comment")] HRESULT Comment([in] BSTR newVal);
+		[propget, id(3), helpstring("Compression ratio of the file")] HRESULT CompressionRatio([out, retval] float *pVal);
+		[propget, id(4), helpstring("Size of the file after compression")] HRESULT CompressionSize([out, retval] long *pVal);
+		[propget, id(5), helpstring("File Attributes")] HRESULT Attributes([out, retval] long *pVal);
+		[propget, id(6), helpstring("Is this file encrypted or not?")] HRESULT Encrypted([out, retval] VARIANT_BOOL *pVal);
+		[propget, id(7), helpstring("UncompressedSize")] HRESULT UncompressedSize([out, retval] long *pVal);
+		[propget, id(8), helpstring("Modification date")] HRESULT ModificationDate([out, retval] DATE *pVal);
+		[propput, id(8), helpstring("Modification date")] HRESULT ModificationDate([in] DATE newVal);
+	};
+
+	[
+		uuid(D4C11DB0-8B64-11D7-923B-000000000000),
+		helpstring("Archive Class")
+	]
+	coclass Archive
+	{
+		[default] interface IArchive;
+		[default, source] dispinterface _IArchiveEvents;
+	};
+	[
+		uuid(D4C11DB5-8B64-11D7-923B-000000000000),
+		helpstring("FileInfo Class")
+	]
+	coclass FileInfo
+	{
+		[default] interface IFileInfo;
+	};
+};

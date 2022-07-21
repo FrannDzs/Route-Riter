@@ -1,0 +1,9 @@
+7
+"Pnt"
+"swt_"
+"45dYard"
+"Y1TDblSlip190Lft"
+"Y1TDblSlip190Rgt"
+"Y1TSglSlip190Lft"
+"Y1TSglSlip190Rgt"
+

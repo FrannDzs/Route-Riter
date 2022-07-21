@@ -1,0 +1,26 @@
+HKCR
+{
+	SAWZipNG.File.1 = s 'File Class'
+	{
+		CLSID = s '{D4C11DB3-8B64-11D7-923B-000000000000}'
+	}
+	SAWZipNG.File = s 'File Class'
+	{
+		CLSID = s '{D4C11DB3-8B64-11D7-923B-000000000000}'
+		CurVer = s 'SAWZipNG.File.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {D4C11DB3-8B64-11D7-923B-000000000000} = s 'File Class'
+		{
+			ProgID = s 'SAWZipNG.File.1'
+			VersionIndependentProgID = s 'SAWZipNG.File'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			'TypeLib' = s '{D4C11DA3-8B64-11D7-923B-000000000000}'
+		}
+	}
+}

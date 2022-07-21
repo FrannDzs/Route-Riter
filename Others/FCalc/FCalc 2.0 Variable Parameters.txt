@@ -1,0 +1,66 @@
+                Summary Of Variable Parameters Used in Fcalc 2.0 Windows version
+ 
+Type of Rolling Stock              A                            B                   C
+ 
+Standard Roller Bearings
+ (e1 = -0.10  v2_min = 1.00001  v2_max = 2.00001)
+
+Locomotive           (6.3743*weight + 128.998*axles)      (0.32905*weight)  (0.57501*c_drag*area)
+Steam Engine         (6.3743*weight + 128.998*axles + D)  (0.32905*weight)  (0.57501*c_drag*area)
+Leading Railcar      (6.3743*weight + 128.998*axles)      (0.65811*weight)  (0.57501*c_drag*area)
+Middle Railcar       (6.3743*weight + 128.998*axles)      (0.65811*weight)      (0.08146*area)
+End Railcar          (6.3743*weight + 128.998*axles)      (0.65811*weight)      (0.14375*area)
+Passenger Car        (6.3743*weight + 128.998*axles)      (0.32905*weight)      (0.08146*area)
+Standard Freight Car (7.3550*weight + 80.625*axles)       (0.16453*weight)      (0.11979*area)
+Empty Hopper         (7.3550*weight + 80.625*axles)       (0.16453*weight)      (0.35938*area)
+Autorack             (7.3550*weight + 80.625*axles)       (0.16453*weight)      (0.16771*area)
+TOFC                 (2.9420*weight + 88.964*axles)       (0.10968*weight)        (4.45168)
+Spine Car            (2.9420*weight + 88.964*axles)       (0.10968*weight)        (4.11780)
+COFC(Double Stack)   (2.9420*weight + 88.964*axles)       (0.10968*weight)        (3.89522)
+
+Optimized Seal/Labyrinth Low-Torque Roller Bearings
+ (e1 = -0.05  v2_min = 1.00001  v2_max = 2.00001)
+
+Locomotive           (6.3743*weight + 102.309*axles)      (0.21937*weight)  (0.57501*c_drag*area)
+Leading Railcar      (6.3743*weight + 100.085*axles)      (0.41680*weight)  (0.57501*c_drag*area)
+Middle Railcar       (6.3743*weight + 100.085*axles)      (0.41680*weight)      (0.08146*area)
+End Railcar          (6.3743*weight + 100.085*axles)      (0.41680*weight)      (0.14375*area)
+Passenger Car        (6.3743*weight + 100.085*axles)      (0.20840*weight)      (0.08146*area)
+Standard Freight Car (7.3550*weight + 48.9305*axles)      (0.10968*weight)      (0.11979*area)
+Empty Hopper         (7.3550*weight + 48.9305*axles)      (0.10968*weight)      (0.35938*area)
+Autorack             (7.3550*weight + 48.9305*axles)      (0.10968*weight)      (0.16771*area)
+TOFC                 (2.9420*weight + 60.051*axles)       (0.07678*weight)        (4.45168)
+Spine Car            (2.9420*weight + 60.051*axles)       (0.07678*weight)        (4.11780)
+COFC(Double Stack)   (2.9420*weight + 60.051*axles)       (0.07678*weight)        (3.89522)
+
+Friction Bearings
+ (e1 = -0.25  v2_min = 5.00001  v2_max = 6.00001)
+
+Steam Engine         (6.3743*weight + 128.998*axles + D)  (0.32905*weight)  (0.57501*c_drag*area)
+Passenger Car        (6.3743*weight + 128.998*axles)      (0.32905*weight)      (0.08146*area)
+Leading Railcar      (6.3743*weight + 128.998*axles)      (0.98716*weight)  (0.57501*c_drag*area)
+Middle Railcar       (6.3743*weight + 128.998*axles)      (0.98716*weight)      (0.08146*area)
+End Railcar          (6.3743*weight + 128.998*axles)      (0.98716*weight)      (0.14375*area)
+Standard Freight Car (6.3743*weight + 128.998*axles)      (0.49358*weight)      (0.11979*area)
+Empty Hopper         (6.3743*weight + 128.998*axles)      (0.49358*weight)      (0.35938*area)
+
+High-Speed Train
+ (e1 = -0.10  v2_min = 0.50001  v2_max = 3.00001)
+
+Locomotive           (3.9227*weight + 88.964*axles)       (0.10968*weight)  (0.35938*c_drag*area)
+Passenger Car        (4.9033*weight + 88.964*axles)       (0.10968*weight)  (0.00291*length*area)
+
+Maglev
+ (e1 = 0  v2_min = 0.50001  v2_max = 1.00001)
+                            (9.8066*weight)               (0.12*length)     ((0.00291*length + 0.27388*c_drag)*area)
+
+
+Notes on parameters:
+
+axles = number of axles
+weight = mass in metric tons
+area = frontal or cross-sectional area in square meters
+c_drag = drag coefficient
+length = length in meters
+D = mass on driver wheels in metric tons times a coefficient that depends on type of valves etc,
+    for a standard steam engine with ordinary bearings this is 20lbs per ton

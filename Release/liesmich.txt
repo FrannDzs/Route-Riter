@@ -1,0 +1,151 @@
+Route-Riter
+------------------
+
+Dies ist eine neue Version der Route-Riter Software, die eine umfangreiche
+Werkzeug-Suite ist. Haupt-Zweck des Programms ist es, die Gesamt-Datei-Groesse von
+Strecken zu verringern. Dies wird erreicht durch Entfernen aller nicht 
+erforderlichen Dateien. 
+
+Dieses Software-Paket enthaelt eine Spezial-Version von Paul Gausden's Shape File Viewer
+(3D-Objekt-Betrachter) und Martin Wright's T-View, welches ein
+Thumbnail-Viewer (Mini-Ordner-Voransicht) fuer Bild-Dateien ist. Tview.exe und 
+SView.exe werden automatisch mit in den Route-Riter Ordner installiert,
+und werden im Route-Riter mit Klick auf die Buttons '.S Bild-Betrachter' und
+'T-View ACE Bildbetrachter' aufgerufen. Beide Buttons finden sich unter
+'Grafik-Dateien'. Der Shape-Viever heißt SViewRR.exe und muß sich im Route-Riter Ordner befinden.
+Es ist moeglich, ueber einen Button im Grafik-TAB das TGATool2 zu starten, welches ein
+Programm zum Bearbeiten von ACE-Dateien, also Oberflaechen-Texturen, ist.
+
+Eine weitere Neuheit ist die Möglichkeit, mit dem Shape viewer komplette Züge (consists)
+ zu betrachten. Ein 'Con'-Buttun oben links im Route-Riter Huaptfenster waehlt automatisch
+ den consists-Ordner aus. Waehle einen Zug und klicke auf den Button 'Zeige ausgewaehlten
+ Zug' im Grafik-Dateien-TAB. Dies ist eine Beta-Version und das Bewegen des Zuges mit der
+ Maus ist nicht sehr gut.
+
+Im Hauptfenster gibt es einen Button, um die .ref-Datei der Strecke zu editieren. Die
+ Ref-Datei sollte in einer Tabellen-Kalkulations-artigen Darstellung öffnen.
+
+Klick auf einen Tabellenkopf sortiert alphabeitsch nach dieser Spalte.
+
+Alles kann manuell editiert werden. Um zum Beispiel mehrere Zellen in einer Spalte
+ umzubenennen, einfach mit der Maus markieren, bis alle gewünschten blau hinterlegt,
+ dann Rechtsklick darauf und eine Dialogbox erscheint.
+
+WEnn eine bestimmte sortier-Reihenfolge in der .ref-Datei erreicht werden soll, Klick auf
+ den Reindex .ref-File-Button und sie werden beginnend mit 0 nummeriert. Speichern mit 
+ Button 'save new file'. Verlassen ohne zu speichern mit 'Exit'.
+
+Hinweis: ungefähr die ersten 10 Einträge in der :ref-Datei werden nicht geändert. Dies 
+sind Platzhalter-Einträge um Dinge wie track sections (Gleisabsschnitte)  und platforms
+ (Bahnsteige) im Streckeneditor hinzuzufügen.
+
+Verschiedene Funktionen, die eine lange Rechenzeit benoetigen 
+(z.B. Alle Acts aller Strecken), haben jetzt einen Abort (Abbruch)-Button. Klick darauf 
+beendet die Aktion, je nachdem, was gerade von Route-Riter bearbeitet wird, kann es allerdings einen Moment dauern, bis abgebrochen wird.
+
+
+Neue Features in V5.1.00
+Backup Strecke - Für Streckenbauer, erstellt Sicherungskopie der World/Tile/TD/Root-Ordner 
+der Strecke, an der gerade gearbitet wird, in einen auswählbaren Ordner.
+
+Trainset Button - Rechtsklick auf den COn-Button im Hauptfenster wählt den trainset Ordner
+ aus.
+
+Ansichten der .S (Shape)-Dateien speichern/drucken - Gehe zum Grafik-Dateien-Tab, dann 
+wähle einen Ordner, z.B. trainset/BR41Reko. Klick oben auf S um alle nicht .S-Dateien 
+auszublenden _ Klick Datei-Suche(Filter) - Alles auswählen - Klick Drucke/Speichere 
+Ansicht der .S - Es wird nach dem Namen des Ordners gefragt, in dem gespeichert werden 
+soll, und ebenso die fertige Zusammenstellung gezeigt, fertig zum Drucken, 6 Bilder pro
+ Seite.
+
+
+
+
+
+Neu-Installation einer Route-Riter Vollversion
+----------------------
+1. Zuerst bitte alle aelteren Versionen mit Hilfe von 
+Systemsteuerung-Software-Deinstallieren entfernen. 
+
+2. Route-Riter ist einfach zu installieren. Einfach das zip (in einen
+temporaeren Ordner) entpacken und dort das setup.exe starten. Route-Riter wird
+normalerweise in den Pfad c:\program files\Route_Riter installiert. Pfad ist 
+aber aenderbar.
+
+3. FUER WINDOWS XP BENUTZER - Wenn waehrend der Installation eine Meldung erscheint,
+dass eine System-Datei veraltet ist und ersetzt werden muß: Installation bitte
+Abbrechen, und Datei Setup.lst loeschen. Jetzt die Datei SetupXP.lst in Setup.lst
+umbenennen, damit diese Datei verwendet wird. Dann Setup.exe erneut starten.
+
+4. Entpacke die Datei Stuffitpack.zip in den Route_Riter Ordner.
+
+5. Nur das Englische Sprachpack, Lang_English.txt, muß installiert sein. Andere
+Sprachpacks sind automatisch im Route_Riter verfuegbar, wenn sie sich im Route-Riter
+Ordner befinden. Nicht benoetigte Sprachpacks  koennen geloescht werden. Anmerkung:
+Das englische, deutsche und spanische Sprachpack ist komplett. Wenn jemand die
+anderen Sprachpacks fertig uebersetzen moechte, oder auch eine ganz neue Sprache,
+kann er das natuerlich gerne tun. Bitte mir zukommen lassen, damit ich es
+zukuenftigen Ausgaben des Route_Riter Software-Pakets hinzufuegen kann.
+
+6. Seit Version 4.2.34 sind einige neue Grafik-Funktionen hinzuggekommen. - 
+Diese sind aber nur verfuegbar, wenn Martin Wrights neueste mwgfx.dll Datei
+installiert ist. Diese dll kann heruntergeladen werden von Martins Homepage
+http://www.mnwright.btinternet.co.uk/
+Die korrekte Datei ist dort unter Graphics Tools - Newest mwgfx.dll version.
+Oder Direktlink http://www.mnwright.btinternet.co.uk/download/mwgfxdll.EXE
+
+7. Beim ersten Start des Route-Riter ist Englisch voreingestellt. Zum Umschalten auf
+Deutsch links oben im Menue auf 'Languages'. Deutsch auswaehlen.
+
+
+Installation eines Route-Riter update.
+--------------------------------------
+1. Es muss eine passende Route-Riter Version installiert sein. Weitere Info dort,
+wo Route-Riter downgeloadet wurde.
+
+2. Die eigentliche Installation ist sehr einfach. Die zip-Datei in den Route-Riter
+Ordner entzippen.
+
+3. Wenn mwace.dll und/oder mwacevb.dll mitgeliefert wurden: Diese müssen in den
+Ordner Windows\system (Win98) bzw. in Windows\System32 (Win XP) kopiert werden.
+
+4. Soll TGATool2 verwendet werden, muss das TgaTool2.exe im Route-Riter Verzeichnis
+sein. TGATool2 ggf. seperat beschaffen und Installieren.
+
+5. Nur das Englische Sprachpack, Lang_English.txt, muß installiert sein. Andere
+Sprachpacks sind automatisch im Route_Riter verfuegbar, wenn sie sich im Route-Riter
+Ordner befinden. Nicht benoetigte Sprachpacks  koennen geloescht werden. Anmerkung:
+Das englische, deutsche und spanische Sprachpack ist komplett. Wenn jemand die
+anderen Sprachpacks fertig uebersetzen moechte, oder auch eine ganz neue Sprache,
+kann er das natuerlich gerne tun. Bitte mir zukommen lassen, damit ich es
+zukuenftigen Ausgaben des Route_Riter Software-Pakets hinzufuegen kann.
+
+Falls die mwace.dll und/oder mwacebv.dll bei dieser Version fehlen: diese dll
+können heruntergeladen werden von Martins Homepage
+http://www.mnwright.btinternet.co.uk/.
+Die korrekte Datei ist dort unter Graphics Tools - Newest mwgfx.dll version.
+Oder Direktlink http://www.mnwright.btinternet.co.uk/download/mwgfxdll.EXE
+
+
+Installation oder Update eines Sprachpakets
+---------------------------
+Das Sprachpaket, z.B. Lang_Deutsch.txt, in den Route-Rite-Ordner verschieben.
+Bei Update ueberschreiben der alten Version zulassen. Sprachpaket-Datei muss allgemein
+das Namens-Format Lang_xxxxx.txt haben. Der frei waehlbare Ausdruck xxxxx wird
+automatisch ins Sprachauswahl-Menue von Route-Riter uebernommen.
+
+Vielen Dank an Ruediger Heilig fuer seine großartige Arbeit bei der Erstellung
+der deutschen Uebersetzung und an OldieDaddy fuer seine Tests und viele gute Ideen, 
+an Javier Torres fuer seine spanische Übersetzung und Emanuel Vallois für seine 
+französische Übersetzung.
+
+Gruesse - Mike Simpson
+email: virtualtrains@optushome.com.au
+http://www.railpage.org.au/steam4me/trainsim/Route_Riter 
+
+30.Januar 2004
+
+Weitere Hinweise ggf. in der englischen Originalversion dieses Texts, Route_Riter.txt
+Gruesse des deutschen Uebersetzers - rudi0310
+Januar 2004
+

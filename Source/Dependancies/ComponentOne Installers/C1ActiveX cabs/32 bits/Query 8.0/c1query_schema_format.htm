@@ -1,0 +1,1334 @@
+<html>
+
+<head>
+<title>ComponentOne C1Query Schema XML Format</title>
+<meta name="GENERATOR" content="Microsoft FrontPage 3.0">
+</head>
+
+<body>
+
+<p class="MsoNormal" align="center"><big><strong><span lang="EN-US"
+style="mso-ansi-language:EN-US">ComponentOne Query Schema XML Format<o:p></o:p></span></strong></big></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p></o:p>This document
+describes C1Query schema format. The XML document structure is presented here in a form <strong>similar
+to </strong>DTD document (Document Type Definition)<o:p></o:p>, but it is not a valid DTD and can not
+be used to verify a C1Query XML schema.</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Clicking a
+hyperlink provides additional description of an element.</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Legend:</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><font
+color="#800000"><strong>#PCDATA</strong></font> - means that the element (node) has data.
+All data nodes contain strings or data converted to strings. Boolean values are
+represented by <strong>0 </strong>(False) and <strong>1</strong> (True). Enumerated types
+are also represented by <strong>integer</strong> values.</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><strong><font
+color="#000000">(</font><font color="#008000">ACHILD?, ACHILD, ACHILD*</font><font
+color="#000000">)</strong> - if an element contains child nodes (elements) instead of
+data, the list of child nodes is provided. </font></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><font
+color="#000000"><strong>? </strong>- means that the element is optional.<br>
+<strong>*</strong>- means that there can be 0 or more elements of this type. <br>
+If there is no ? or * qualifier, it means there is exactly one elements of this type. </font></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Schema structure:</span></p>
+
+<p class="MsoNormal"><a name="top"></a><span lang="EN-US" style="mso-ansi-language:EN-US"><b
+style="mso-bidi-font-weight:normal">&lt;!DOCTYPE <a
+href="#&lt;!ELEMENT SCHEMA (VIEWS, JOINRELATIONS, CONDRELATIONS, FOLDER, EXTENSIONS)&gt;">SCHEMA</a>
+[<br>
+&lt;!ELEMENT <a href="#CP">CP</a> (<font color="#800000">#PCDATA</font>)&gt;<br>
+&lt;!ELEMENT <a href="#IMPORTEDFROM">IMPORTEDFROM</a> (<font color="#800000">#PCDATA</font>)&gt;<br>
+&lt;!ELEMENT <a
+href="#&lt;!ELEMENT SCHEMA (VIEWS, JOINRELATIONS, CONDRELATIONS, FOLDER, EXTENSIONS)&gt;">SCHEMA</a>
+<o:p></o:p>(<font color="#008000">VIEWS, JOINRELATIONS?, CONDRELATIONS?, FOLDER, EXTENSIONS?,
+CATALOGS</font>)&gt;<o:p></o:p><br>
+&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a href="#&lt;!ELEMENT VIEWS (VIEW+)&gt;">VIEWS</a> (<font
+color="#008000">VIEW*</font>)&gt;<o:p></o:p><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT VIEW(VIEWNAME, JOINGROUPTYPE, CUSTOMWHERE, VIEWFIELDS, VIEWTABLES)&gt;">VIEW</a>
+(<font color="#008000">VIEWNAME, JOINGROUPTYPE?, CUSTOMWHERE?, VIEWFIELDS, VIEWTABLES</font>)&gt;<o:p></o:p><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT VIEWNAME(#TEXT)&gt;">VIEWNAME</a> (<font color="#800000">#PCDATA</font>)&gt;<o:p></o:p><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT JOINGROUPTYPE (#PCDATA)&gt;">JOINGROUPTYPE</a> (<font color="#800000">#PCDATA</font>)&gt;<o:p></o:p><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT CUSTOMWHERE (#PCDATA)&gt;">CUSTOMWHERE</a> (<font color="#800000">#PCDATA</font>)&gt;<o:p></o:p><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT VIEWFIELDS (VIEWFIELD*)&gt;">VIEWFIELDS</a> (<font color="#008000">VIEWFIELD*</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a
+href="#&lt;!ELEMENT VIEWFIELD (FIELDTABLENAME, FIELDNAME, FIELDSIZE, FIELDPREC, FIELDFORMULA,">VIEWFIELD</a>
+(<font color="#008000">FIELDTABLENAME, FIELDNAME, FIELDTYPE, FIELDSIZE, FIELDPREC?,
+FIELDFORMULA?, FIELDLEFTJOINGROUPNAME?, FIELDRIGHTJOINGROUPNAME</font>?)&gt;<o:p><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT FIELDTABLENAME (#PCDATA)&gt;">FIELDTABLENAME</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT FIELDNAME (#PCDATA)&gt;">FIELDNAME</a> (<font color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT FIELDTYPE (#PCDATA)&gt;">FIELDTYPE</a> (<font color="#800000">#PCDATA</font>)&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT FIELDSIZE (#PCDATA)&gt;">FIELDSIZE</a> (<font color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT FIELDPREC &nbsp; (#PCDATA)&gt;">FIELDPREC</a> &nbsp; (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT FIELDFORMULA (#PCDATA)&gt;">FIELDFORMULA</a> (<font color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT FIELDLEFTJOINGROUPNAME (#PCDATA)&gt;">FIELDLEFTJOINGROUPNAME</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT FIELDRIGHTJOINGROUPNAME (#PCDATA)&gt;">FIELDRIGHTJOINGROUPNAME</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT VIEWTABLES (VIEWTABLE*)&gt;">VIEWTABLES</a> (<font color="#008000">VIEWTABLE*</font>)&gt;<o:p></o:p></b><br>
+<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT VIEWTABLE (TABLENAME, REQUIRED, JOINS)&gt;">VIEWTABLE</a>
+(<font color="#008000">TABLENAME, REQUIRED, JOINS</font>?)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT TABLENAME (#PCDATA)&gt;">TABLENAME</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT REQUIRED (#PCDATA)&gt;">REQUIRED</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT JOINS (JOINTYPE, CONDITIONS)&gt;">JOINS</a> (<font
+color="#008000">JOINTYPE, CONDITIONS</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT JOINTYPE (#PCDATA)&gt;">JOINTYPE</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT CONDITIONS (CONDITION*)&gt;">CONDITIONS</a> (<font
+color="#008000">CONDITION*</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a
+href="#&lt;!ELEMENT CONDITION (FIELD1, TABLE1, OPERATOR, FIELD2, TABLE2, EXPRESSION, USEEXPRESSION, CONDITION,">CONDITION</a>
+(<font color="#008000">FIELD1?, TABLE1?, OPERATOR?, FIELD2?, TABLE2?, EXPRESSION?,
+USEEXPRESSION?, CONDITION?, USECONDITION</font>?)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT FIELD1 (#PCDATA)&gt;">FIELD1</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT TABLE1 (#PCDATA)&gt;">TABLE1</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT OPERATOR (#PCDATA)&gt;">OPERATOR</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT FIELD2 (#PCDATA)&gt;">FIELD2</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT TABLE2 (#PCDATA)&gt;">TABLE2</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT EXPRESSION (#PCDATA)&gt;">EXPRESSION</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT USEEXPRESSION (#PCDATA)&gt;">USEEXPRESSION</a> (<font
+color="#800000">#PCDATA</font>)&gt;</strong><br>
+<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT CONDITION (#PCDATA)&gt;">CONDITION</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT USECONDITION (#PCDATA)&gt;">USECONDITION</a> (<font
+color="#800000">#PCDATA</font>)&gt;</strong><br>
+<b style="mso-bidi-font-weight:normal">&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT JOINRELATIONS (JOINRELATION*)&gt;">JOINRELATIONS</a> (<font
+color="#008000">JOINRELATION*</font>)&gt;<o:p></o:p></b><br>
+<b style="mso-bidi-font-weight:normal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT JOINRELATION (RELATEVIEWS, VIEWLINKS, JOINS)&gt;">JOINRELATION</a>
+(<font color="#008000">RELATEVIEWS, VIEWLINKS, JOINS</font>)&gt;<o:p></o:p><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT RELATEVIEWS (VIEWNAME*)&gt;">RELATEVIEWS</a> (<font color="#008000">VIEWNAME*</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT VIEWNAME (#PCDATA)&gt;">VIEWNAME</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT VIEWLINKS (VIEWLINK*)&gt;">VIEWLINKS</a> (<font color="#008000">VIEWLINK*</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT VIEWLINK (VIEW1, JOINTYPE, VIEW2)&gt;">VIEWLINK</a> (<font
+color="#008000">VIEW1, JOINTYPE, VIEW2</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT VIEW1 (#PCDATA):VIEWLINK&gt;">VIEW1</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT JOINTYPE (#PCDATA)&gt;">JOINTYPE</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT VIEW2 (#PCDATA):VIEWLINK&gt;">VIEW2</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT JOINS (JOIN*)&gt;">JOINS</a> (<font color="#008000">JOIN*</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a
+href="#&lt;!ELEMENT JOIN (FIELD1, TABLE1, VIEW1, OPERATOR, FIELD2, TABLE2, VIEW2, EXPRESSION, USEEXPRESSION, CONDITION,">JOIN</a>
+(<font color="#008000">FIELD1?, TABLE1?, VIEW1?, OPERATOR?, FIELD2?, TABLE2?, VIEW2?,
+EXPRESSION?, USEEXPRESSION?, CONDITION?, USECONDITION</font>?)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT JFIELD1 (#PCDATA)&gt;">FIELD1</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT JTABLE1 (#PCDATA)&gt;">TABLE1</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT VIEW1 (#PCDATA)&gt;">VIEW1</a> (<font color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT JOPERATOR (#PCDATA)&gt;">OPERATOR</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT JFIELD2 (#PCDATA)&gt;">FIELD2</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT JTABLE2 (#PCDATA)&gt;">TABLE2</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT VIEW2 (#PCDATA)&gt;">VIEW2</a> (<font color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT JEXPRESSION (#PCDATA)&gt;">EXPRESSION</a> (<font
+color="#800000">#PCDATA</font>)&gt; <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT JUSEEXPRESSION (#PCDATA)&gt;">USEEXPRESSION</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT JCONDITION (#PCDATA)&gt;">CONDITION</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT JUSECONDITION (#PCDATA)&gt;">USECONDITION</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a href="#&lt;!ELEMENT CONDRELATIONS (CONDRELATION*)&gt;">CONDRELATIONS</a>
+(<font color="#008000">CONDRELATION*</font>)&gt;<o:p></o:p></b><br>
+<b style="mso-bidi-font-weight:normal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT CONDRELATION (RELATEVIEWS, CONDITION)&gt;">CONDRELATION</a>
+(<font color="#008000">RELATEVIEWS, CONDITION</font>)&gt;<o:p></o:p><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT CJRELATEVIEWS (VIEWNAME*)&gt;">RELATEVIEWS</a> (<font color="#008000">VIEWNAME*</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT CJVIEWNAME (#PCDATA)&gt;">VIEWNAME</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT CJCONDITION (#PCDATA)&gt;">CONDITION</a> (<font color="#008000">CONDITION*</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT FOLDER(FOLDERNAME, SUBFOLDERS, FOLDERFIELDS)&gt;">FOLDER</a> (<font
+color="#008000">FOLDERNAME, SUBFOLDERS?, FOLDERFIELDS</font>?)&gt;<o:p></o:p></b><br>
+<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT FOLDERNAME (#PCDATA)&gt;">FOLDERNAME</a> (<font color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT SUBFOLDERS (FOLDER*)&gt;">SUBFOLDERS</a> (<font color="#008000">FOLDER*</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT FOLDERFIELDS (FOLDERFIELD*)&gt;">FOLDERFIELDS</a> (<font
+color="#008000">FOLDERFIELD*</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT FOLDERFIELD (DISPLAYNAME, ALIASNAME, VIEW, NAME, TABLENAME, USESLOOKUPS, LOOKUPVALUES)&gt;">FOLDERFIELD</a>
+(<font color="#008000">DISPLAYNAME?, ALIASNAME?, TAG?, VIEW, NAME, TABLENAME,
+USESLOOKUPS?, LOOKUPVALUES</font>?)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT DISPLAYNAME (#PCDATA)&gt;">DISPLAYNAME</a> (<font color="#800000">#PCDATA</font>)&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT ALIASNAME (#PCDATA)&gt;">ALIASNAME</a> (<font color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT TAG (#PCDATA)&gt;">TAG</a> (<font color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT VIEW (#PCDATA)&gt;">VIEW</a> (<font color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT NAME (#PCDATA)&gt;">NAME</a> (<font color="#800000">#PCDATA</font>)&gt;
+<br>
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT FTABLENAME (#PCDATA)&gt;">TABLENAME</a> (<font color="#800000">#PCDATA</font>)&gt;
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT USESLOOKUPS (#PCDATA)&gt;">USESLOOKUPS</a> (<font color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT LOOKUPVALUES (VALUE*)&gt;">LOOKUPVALUES</a> (<font color="#008000">VALUE*</font>)&gt;</strong><br>
+<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT VALUE (USDATA, CAPTION)&gt;">VALUE</a> (<font
+color="#008000">USDATA, CAPTION</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT USDATA (#PCDATA)&gt;">USDATA</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT CAPTION (#PCDATA)&gt;">CAPTION</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+</strong><b style="mso-bidi-font-weight:normal">&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT EXTENSIONS (EXTENSION*)&gt;">EXTENSIONS</a> (<font color="#008000">EXTENSION*</font>)&gt;<o:p></o:p></b><br>
+<strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT EXTENSION (EXTENDED, EXTENDS)&gt;">EXTENSION</a> (<font
+color="#008000">EXTENDED, EXTENDS</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT EXTENDED (VIEWNAME*)&gt;">EXTENDED</a> (<font color="#008000">VIEWNAME*</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT XVIEWNAME (#PCDATA)&gt;">VIEWNAME</a> (<font
+color="#800000">#PCDATA</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT EXTENDS (VIEWNAME*)&gt;">EXTENDS</a> (<font color="#008000">VIEWNAME*</font>)&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT XXVIEWNAME (#PCDATA)&gt;">VIEWNAME</a> (<font
+color="#800000">#PCDATA</font>)&gt;</strong><br>
+<b style="mso-bidi-font-weight:normal">&nbsp;&nbsp;&nbsp; &lt;!ELEMENT <a
+href="#&lt;!ELEMENT CATALOGS (CATALOG*)&gt;">CATALOGS</a> (<font color="#008000">CATALOG*</font>)&gt;<o:p></o:p></b><br>
+<b style="mso-bidi-font-weight:normal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT CATALOG (VIEW*)&gt;">CATALOG</a> (<font
+color="#008000">VIEW*</font>)&gt;<o:p></o:p></b><br>
+<b style="mso-bidi-font-weight:normal">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;!ELEMENT <a href="#&lt;!ELEMENT CATVIEW (#PCDATA)&gt;">VIEW</a> (<font color="#800000">#PCDATA</font>)&gt;<o:p></o:p></b><br>
+<strong><o:p>]&gt;</strong></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a
+name="&lt;!ELEMENT SCHEMA (VIEWS, JOINRELATIONS, CONDRELATIONS, FOLDER, EXTENSIONS)&gt;"><span
+lang="EN-US" style="mso-ansi-language:EN-US"><b style="mso-bidi-font-weight:normal">&lt;!ELEMENT
+SCHEMA <o:p></o:p>(<font color="#008000">VIEWS, JOINRELATIONS?, CONDRELATIONS?, FOLDER, EXTENSIONS?,
+CATALOGS</font>)&gt;<o:p></o:p></b></span></a></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p>Root element for
+schema data. Contains nested XML elements with all necessary information for views,
+folders, relationships and extensions. <o:p></o:p></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a name="CP"><span lang="EN-US" style="mso-ansi-language:EN-US"><b
+style="mso-bidi-font-weight:normal">&lt;!ELEMENT CP<o:p> </o:p>(<font color="#800000">#PCDATA</font>)&gt;<o:p></o:p></b></span></a></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p>Schema codepage. <o:p></o:p>
+To set the codepage in the Schema Designer, use Schema-&gt;Options dialog-&gt;Schema
+tab-&gt;Schema codepage. Default value: 0 (neutral).</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a name="IMPORTEDFROM"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><b style="mso-bidi-font-weight:normal">&lt;!ELEMENT
+IMPORTEDFROM<o:p> </o:p>(<font color="#800000">#PCDATA</font>)&gt;<o:p></o:p></b></span></a></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Contains OLE DB
+connection string from which the database schema was imported. This property is not used
+at run time, it is used only by Schema Designer when you connect to the database. This
+property is set in the Schema Designer &gt;Options dialog-&gt;Schema tab-&gt;Connection
+String.</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a name="&lt;!ELEMENT VIEWS (VIEW+)&gt;"><b
+style="mso-bidi-font-weight:normal"><span lang="EN-US" style="mso-ansi-language:EN-US">&lt;!ELEMENT
+VIEWS (<font color="#008000">VIEW*</font>)&gt;<o:p></o:p></span></b></a></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p></o:p>Contains the
+collection of schema views. Each view is represented by a VIEW element. <o:p></o:p></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p>&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a
+name="&lt;!ELEMENT VIEW(VIEWNAME, JOINGROUPTYPE, CUSTOMWHERE, VIEWFIELDS, VIEWTABLES)&gt;"><span
+lang="EN-US" style="mso-ansi-language:EN-US"><b style="mso-bidi-font-weight:normal">&lt;!ELEMENT
+VIEW (<font color="#008000">VIEWNAME, JOINGROUPTYPE?, CUSTOMWHERE?, VIEWFIELDS, VIEWTABLES</font>)&gt;<o:p></o:p></b></span></a></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><b
+style="mso-bidi-font-weight:normal"><o:p></b>Stores information about a schema view: view
+fields, view tables (tables the view consists of), relations between view tables.<o:p></o:p></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p>&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a name="&lt;!ELEMENT VIEWNAME(#TEXT)&gt;"><b
+style="mso-bidi-font-weight:normal"><span lang="EN-US" style="mso-ansi-language:EN-US">&lt;!ELEMENT
+VIEWNAME(<font color="#800000">#PCDATA</font>)&gt;<o:p></o:p></span></b></a></p>
+
+<p class="MsoNormal">Contains view name.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p>&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a name="&lt;!ELEMENT JOINGROUPTYPE (#PCDATA)&gt;"><b
+style="mso-bidi-font-weight:normal"><span lang="EN-US" style="mso-ansi-language:EN-US">&lt;!ELEMENT
+JOINGROUPTYPE (<font color="#800000">#PCDATA</font>)&gt;<o:p></o:p></span></b></a></p>
+
+<p class="MsoNormal">If you use join groups, specify here the type of the joins generated
+by the join groups of the view fields. Possible values: </p>
+
+<p class="MsoNormal">0 - inner joins; 1 - outer joins.</p>
+
+<p class="MsoNormal">This property is set in the Schema Designer in the &quot;Use join
+groups as&quot; combo box on the Advanced tab of the View Designer.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p>&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a name="&lt;!ELEMENT CUSTOMWHERE (#PCDATA)&gt;"><b
+style="mso-bidi-font-weight:normal"><span lang="EN-US" style="mso-ansi-language:EN-US">&lt;!ELEMENT
+CUSTOMWHERE (<font color="#800000">#PCDATA</font>)&gt;<o:p></o:p></span></b></a></p>
+
+<p class="MsoNormal">An optional SQL condition to be included in the WHERE clause of the
+generated SQL statement. Corresponding Schema Designer element: View Designer|Advanced
+tab|Custom WHERE condition.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p>&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a name="&lt;!ELEMENT VIEWFIELDS (VIEWFIELD*)&gt;"><b
+style="mso-bidi-font-weight:normal"><span lang="EN-US" style="mso-ansi-language:EN-US">&lt;!ELEMENT
+VIEWFIELDS (<font color="#008000">VIEWFIELD*</font>)&gt;</span></b></a></p>
+
+<p class="MsoNormal">The element storing view fields. Each view field is represented by a
+VIEWFIELD element.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p>&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><b
+style="mso-bidi-font-weight:normal"><br>
+<a
+name="&lt;!ELEMENT VIEWFIELD (FIELDTABLENAME, FIELDNAME, FIELDSIZE, FIELDPREC, FIELDFORMULA,">&lt;!ELEMENT
+VIEWFIELD (<font color="#008000">FIELDTABLENAME, FIELDNAME, FIELDTYPE, FIELDSIZE?,
+FIELDPREC?, FIELDFORMULA?,</a> FIELDLEFTJOINGROUPNAME?, FIELDRIGHTJOINGROUPNAME</font>?)&gt;<o:p></b></span></p>
+
+<p class="MsoNormal">Stores all necessary information about a view field.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p>&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a name="&lt;!ELEMENT FIELDTABLENAME (#PCDATA)&gt;"><b
+style="mso-bidi-font-weight:normal"><span lang="EN-US" style="mso-ansi-language:EN-US">&lt;!ELEMENT
+FIELDTABLENAME (<font color="#800000">#PCDATA</font>)&gt;</span></b></a></p>
+
+<p class="MsoNormal">Contains the view field's database table name.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><o:p>&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><a name="&lt;!ELEMENT FIELDNAME (#PCDATA)&gt;">&lt;!ELEMENT
+FIELDNAME (<font color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Contains the view field's database field name.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a name="&lt;!ELEMENT FIELDTYPE (#PCDATA)&gt;"><b
+style="mso-bidi-font-weight:normal"><span lang="EN-US" style="mso-ansi-language:EN-US">&lt;!ELEMENT
+FIELDTYPE (<font color="#800000">#PCDATA</font>)&gt;</span></b></a></p>
+
+<p class="MsoNormal">Contains the view field's type (integer value). Possible values are a
+subset of the OLE DB enumeration DBTYPEENUM:</p>
+
+<p class="MsoNormal">DBTYPE_EMPTY = 0, <br>
+DBTYPE_NULL = 1, <br>
+DBTYPE_I2 = 2, <br>
+DBTYPE_I4 = 3, <br>
+DBTYPE_R4 = 4, <br>
+DBTYPE_R8 = 5, <br>
+DBTYPE_CY = 6, <br>
+DBTYPE_DATE = 7, <br>
+DBTYPE_BSTR = 8, <br>
+DBTYPE_BOOL = 11, <br>
+DBTYPE_VARIANT = 12, <br>
+DBTYPE_DECIMAL = 14, <br>
+DBTYPE_UI1 = 17, <br>
+DBTYPE_I1 = 16, <br>
+DBTYPE_UI2 = 18, <br>
+DBTYPE_UI4 = 19, <br>
+DBTYPE_I8 = 20, <br>
+DBTYPE_UI8 = 21, <br>
+DBTYPE_GUID = 72, <br>
+DBTYPE_FILETIME = 64, <br>
+DBTYPE_STR = 129, <br>
+DBTYPE_WSTR = 130, <br>
+DBTYPE_NUMERIC = 131, <br>
+DBTYPE_DBDATE = 133, <br>
+DBTYPE_DBTIME = 134, <br>
+DBTYPE_DBTIMESTAMP = 135,<br>
+DBTYPE_DBFILETIME = 137<br>
+</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT FIELDSIZE (#PCDATA)&gt;">&lt;!ELEMENT FIELDSIZE (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Contains the view field's size (integer value).</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT FIELDPREC &nbsp; (#PCDATA)&gt;">&lt;!ELEMENT FIELDPREC &nbsp; (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Contains the view field's precision (integer value).</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT FIELDFORMULA (#PCDATA)&gt;">&lt;!ELEMENT FIELDFORMULA (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="normal">For a calculated field, this element contains the SQL expression that is
+used in the generated SQL statement. In this expression, use SQL syntax for functions and
+operators, and the following syntax for table fields: [table_name].[field_name]. For
+example:</p>
+
+<p class="normal"><strong>[Order&nbsp;Details].[UnitPrice]&nbsp;*&nbsp;[Order&nbsp;Details].[Quantity]&nbsp;*&nbsp;(1&nbsp;-&nbsp;[Order&nbsp;Details].[Discount])</strong></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT FIELDLEFTJOINGROUPNAME (#PCDATA)&gt;">&lt;!ELEMENT
+FIELDLEFTJOINGROUPNAME (<font color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Foreign join group name. </p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT FIELDRIGHTJOINGROUPNAME (#PCDATA)&gt;">&lt;!ELEMENT
+FIELDRIGHTJOINGROUPNAME (<font color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Primary join group name. </p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT VIEWTABLES (VIEWTABLE*)&gt;">&lt;!ELEMENT VIEWTABLES (<font
+color="#008000">VIEWTABLE*</font>)&gt;<o:p></o:p></a></span></b></p>
+
+<p class="MsoNormal">Contains nodes that contain all necesary information about view
+tables and relations between view tables.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT VIEWTABLE (TABLENAME, REQUIRED, JOINS)&gt;"><strong>&lt;!ELEMENT
+VIEWTABLE (<font color="#008000">TABLENAME, REQUIRED, JOINS</font>)&gt;</strong></a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Information about
+a table used in a view. A single table can be used in multiple views.</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT TABLENAME (#PCDATA)&gt;">&lt;!ELEMENT TABLENAME (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Contains view
+table name (a database table name). </span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT REQUIRED (#PCDATA)&gt;">&lt;!ELEMENT REQUIRED (<font color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal">Using this element, you can make a table optional, that is, included
+in the generated SQL statement only if one of its fields is directly specified or
+indirectly referenced in the user query. Possible values:&nbsp; 0 - not required, 1 -
+required.&nbsp;&nbsp; Default value: required.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a name="&lt;!ELEMENT JOINS (JOINTYPE, CONDITIONS)&gt;"><strong><span
+lang="EN-US" style="mso-ansi-language:EN-US">&lt;!ELEMENT JOINS (<font color="#008000">JOINTYPE,
+CONDITIONS</font>)&gt;</span></strong></a></p>
+
+<p class="MsoNormal">Contains joins between this view table and view tables preceding it
+in the view.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT JOINTYPE (#PCDATA)&gt;">&lt;!ELEMENT JOINTYPE (<font color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal">Defines join type for this table view. It corresponds to the Join
+type option located on the Table properties tab of the View Designer. Possible values:</p>
+
+<p class="MsoNormal">0 - inner join, 1 - outer join, 2 - full outer join.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT CONDITIONS (CONDITION*)&gt;">&lt;!ELEMENT CONDITIONS (<font
+color="#008000">CONDITION*</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Contains the list
+of join conditions used to join this view table with view tables preceding it in the view.
+Each condition corresponds to a CONDITION element.</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a
+name="&lt;!ELEMENT CONDITION (FIELD1, TABLE1, OPERATOR, FIELD2, TABLE2, EXPRESSION, USEEXPRESSION, CONDITION,">&lt;!ELEMENT
+CONDITION (<font color="#008000">FIELD1?, TABLE1?, OPERATOR?, FIELD2?, TABLE2?,
+EXPRESSION?, USEEXPRESSION?, CONDITION?,</a> USECONDITION</font>?)&gt;</span></strong></p>
+
+<p class="MsoNormal">Join condition information (left/right fields and expressions). Note
+that all child elements are optional. This is because their use depends on the value of
+USECONDITION and USEEXPRESSION.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT FIELD1 (#PCDATA)&gt;">&lt;!ELEMENT FIELD1 (<font color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal">Left field name. This node is used in conjunction with TABLE1 node.
+If USECONDITION=1 (True, SQL condition is used), this node is ignored. </p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT TABLE1 (#PCDATA)&gt;">&lt;!ELEMENT TABLE1 (<font color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Left field table
+name. This node is used in conjunction with FIELD1 node. </span>If USECONDITION=1 (True,
+SQL condition is used), this node is ignored. </p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT OPERATOR (#PCDATA)&gt;">&lt;!ELEMENT OPERATOR (<font color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">The join
+condition's comparison operator. This node is used in conjunction with FIELD1 and FIELD2
+or EXPRESSION nodes. </span>Possible values:</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">0 - equal, <br>
+1 - Greater than, <br>
+2 - Less than, <br>
+3 - Greater or equal, <br>
+4 - Less or equal, <br>
+5 - Not equal, <br>
+6 - Is null (FIELD2 and EXPRESSION ignored),<br>
+7 - Is not null (FIELD2 and EXPRESSION ignored),<br>
+8 - Contains,<br>
+9 - Starts with.</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a name="&lt;!ELEMENT FIELD2 (#PCDATA)&gt;"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><strong>&lt;!ELEMENT FIELD2 (<font color="#800000">#PCDATA</font>)&gt;</strong></span></a></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Right</span> field
+name. This node is used in conjuncion with TABLE2 node. This node is ignored if
+USECONDITION=1 (True). </p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><strong><br>
+</strong>&nbsp;</o:p><o:p>&nbsp;</o:p><a href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><a
+name="&lt;ELEMENT TABLE2 (#PCDATA)&gt;">&lt;ELEMENT TABLE2 (<font color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Right field table
+name. This node is used in conjunction with FIELD2 node. This node is ignored if
+USEEXPRESSION=1 (True).</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><strong><br>
+</strong>&nbsp;</o:p><a href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><a
+name="&lt;!ELEMENT EXPRESSION (#PCDATA)&gt;">&lt;!ELEMENT EXPRESSION (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal">You can use SQL expression on the right part of a join condition. The
+following syntax is used for fields in the expression: [table_name].[field_name]. This
+value has effect only if USEEXPRESSION=1 (True) and USECONDITION=0 (False)</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT USEEXPRESSION (#PCDATA)&gt;">&lt;!ELEMENT USEEXPRESSION (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal">Contains 1 if an an expression (EXPRESSION node) is used instead of a
+right side field. Contains 0 if a field (FIELD2 node) is used on the right side.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT CONDITION (#PCDATA)&gt;"><strong>&lt;!ELEMENT CONDITION (<font
+color="#800000">#PCDATA</font>)&gt;</strong></a></span></p>
+
+<p class="MsoNormal">The complete join condition is specified as an SQL text, without
+differentiating between its left and right side. The following syntax is used for fields
+in the condition: &nbsp; [table_name].[field_name]. This node has effect only if
+USECONDITION=1 (True).</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT USECONDITION (#PCDATA)&gt;">&lt;!ELEMENT USECONDITION (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Contains 1 (True)
+if an SQL condition (CONDITION node) is used. If this node is set to 1, FIELD1,FIELD2 and
+EXPRESSION nodes are ignored. The SQL condition text is stored in the CONDITION node. In
+other cases, this node is set to 0 (False).</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT JOINRELATIONS (JOINRELATION*)&gt;"><b
+style="mso-bidi-font-weight:normal">&lt;!ELEMENT JOINRELATIONS (<font color="#008000">JOINRELATION*</font>)&gt;<o:p></o:p></b></a></span></p>
+
+<p class="MsoNormal">Contains schema join relationships. Each join relationship is
+represented by a JOINRELATION element.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT JOINRELATION (RELATEVIEWS, VIEWLINKS, JOINS)&gt;"><b
+style="mso-bidi-font-weight:normal">&lt;!ELEMENT JOINRELATION (<font color="#008000">RELATEVIEWS,
+VIEWLINKS, JOINS</font>)&gt;<o:p></o:p></b></a></span></p>
+
+<p class="MsoNormal">Contains all information about a join relationship: related views,
+join type used between these views, and join conditions.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT RELATEVIEWS (VIEWNAME*)&gt;">&lt;!ELEMENT RELATEVIEWS (<font
+color="#008000">VIEWNAME*</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Contains a collection of VIEWNAME nodes enumerating the views
+participating in this join relationship.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a name="&lt;!ELEMENT VIEWNAME (#PCDATA)&gt;"><b
+style="mso-bidi-font-weight:normal"><span lang="EN-US" style="mso-ansi-language:EN-US">&lt;!ELEMENT
+VIEWNAME (<font color="#800000">#PCDATA</font>)&gt;</span></b></a></p>
+
+<p class="MsoNormal">Contains a view name. Represents an individual node in the
+RELATEVIEWS collection.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT VIEWLINKS (VIEWLINK*)&gt;">&lt;!ELEMENT VIEWLINKS (<font
+color="#008000">VIEWLINK*</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Contains node that define how adjucent views are connected in the
+join relationship (join type). Each VIEWLINK element contains three subnodes: VIEW1,
+JOINTYPE and VIEW2. For any two consecutive VIEWLINK nodes, VIEW1 of the second must be
+equal to VIEW2 of the first. For example:</p>
+
+<p class="MsoNormal">&lt;VIEWLINK&gt;<br>
+&lt;VIEW1&gt;Categories&lt;/VIEW1&gt;<br>
+&lt;JOINTYPE&gt;0&lt;/JOINTYPE&gt;<br>
+&lt;VIEW2&gt;Products&lt;/VIEW2&gt;<br>
+&lt;/VIEWLINK&gt;<br>
+&lt;VIEWLINK&gt;<br>
+&lt;VIEW1&gt;Products&lt;/VIEW1&gt;<br>
+&lt;JOINTYPE&gt;1&lt;/JOINTYPE&gt;<br>
+&lt;VIEW2&gt;Orders&lt;/VIEW2&gt;<br>
+&lt;/VIEWLINK&gt;</p>
+
+<p class="MsoNormal">In a binary relationship, there is only one VIEWLINK element.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT VIEWLINK (VIEW1, JOINTYPE, VIEW2)&gt;">&lt;!ELEMENT VIEWLINK (<font
+color="#008000">VIEW1, JOINTYPE, VIEW2</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">An individual node of the VIEWLINKS collection. </p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT VIEW1 (#PCDATA):VIEWLINK&gt;">&lt;!ELEMENT VIEW1 (<font
+color="#800000">#PCDATA</font>)&gt; &nbsp;&nbsp;&nbsp;&nbsp; </a></span></b></p>
+
+<p class="MsoNormal">Contains the view name of the first view in a VIEWLINK. </p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal">&nbsp;</p>
+
+<p class="MsoNormal"><a name="&lt;!ELEMENT JJOINTYPE (#PCDATA)&gt;"><b
+style="mso-bidi-font-weight:normal"><span lang="EN-US" style="mso-ansi-language:EN-US">&lt;!ELEMENT
+JOINTYPE (<font color="#800000">#PCDATA</font>)&gt;</span></b></a></p>
+
+<p class="MsoNormal">Contains the type of join used in a VIEWLINK. The join connects the
+second view (VIEW2) to either the first view (VIEW1) or other views preceding the second
+view in the relationship (for a binary relationship, it is always the first view). For a
+binary relationship, this node corresponds to the <strong>using &lt;join type&gt; join</strong>
+combo box of the Join Relationship Designer. For an advanced (ternary or higher)
+relationship, this node corresponds to the <strong>Join type</strong> combo box.</p>
+
+<p class="MsoNormal">Possible values for a binary relationship: </p>
+
+<p class="MsoNormal">0 - inner;<br>
+1 - outer;<br>
+2 - full;<br>
+3 - two-way outer. </p>
+
+<p class="MsoNormal">Possible values for a ternary or higher relationship:</p>
+
+<p class="MsoNormal">0 - left inner;<br>
+1 - left outer;<br>
+2 - full outer.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT VIEW2 (#PCDATA):VIEWLINK&gt;">&lt;!ELEMENT VIEW2 (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Contains the view name of the second view in a VIEWLINK.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT JOINS (JOIN*)&gt;">&lt;!ELEMENT JOINS (<font color="#008000">JOIN*</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Contains the joins (join conditions) of the join relationship. Each
+join is represented by a JOIN element.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a
+name="&lt;!ELEMENT JOIN (FIELD1, TABLE1, VIEW1, OPERATOR, FIELD2, TABLE2, VIEW2, EXPRESSION, USEEXPRESSION, CONDITION,">&lt;!ELEMENT
+JOIN (<font color="#008000">FIELD1?, TABLE1?, VIEW1?, OPERATOR?, FIELD2?, TABLE2?, VIEW2?,
+EXPRESSION?, USEEXPRESSION?, CONDITION?,</a> USECONDITION</font>?)&gt;</span></b></p>
+
+<p class="MsoNormal">Join condition information (left/right fields and expressions). Note
+that all child elements are optional. This is because their use depends on the value of
+USECONDITION and USEEXPRESSION.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT JFIELD1 (#PCDATA)&gt;">&lt;!ELEMENT FIELD1 (<font color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Left field name. This node is used in conjunction with TABLE1 and
+VIEW1 nodes. If USECONDITION=1 (True, SQL condition is used), this node is ignored.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT JTABLE1 (#PCDATA)&gt;">&lt;!ELEMENT TABLE1 (<font color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Left field table name. This node is used in conjunction with FIELD1
+and VIEW1 nodes. If USECONDITION=1 (True, SQL condition is used), this node is ignored.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT VIEW1 (#PCDATA)&gt;">&lt;!ELEMENT VIEW1 (<font color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Left field view name. This node is used in conjunction with FIELD1
+and TABLE1 nodes. If USECONDITION=1 (True, SQL condition is used), this node is ignored.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT JOPERATOR (#PCDATA)&gt;">&lt;!ELEMENT OPERATOR (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">The join
+condition's comparison operator. </span>Possible values:</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">0 - equal, <br>
+1 - Greater than, <br>
+2 - Less than, <br>
+3 - Greater or equal, <br>
+4 - Less or equal, <br>
+5 - Not equal, <br>
+6 - Is null (FIELD2 and EXPRESSION ignored),<br>
+7 - Is not null (FIELD2 and EXPRESSION ignored),<br>
+8 - Contains,<br>
+9 - Starts with.</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT JFIELD2 (#PCDATA)&gt;">&lt;!ELEMENT FIELD2 (<font color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Right field name. This node is used in conjunction with TABLE2 and
+VIEW2 nodes. This node is used only if both USEEXPRESSION and USECONDITION are False (0).</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT JTABLE2 (#PCDATA)&gt;"><b style="mso-bidi-font-weight:normal">&lt;!ELEMENT
+TABLE2 (<font color="#800000">#PCDATA</font>)&gt;</b></a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Right field table
+name. This node is used in conjunction with FIELD2 and VIEW2 nodes. </span>This node is
+used only if both USEEXPRESSION and USECONDITION are False (0).</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT VIEW2 (#PCDATA)&gt;">&lt;!ELEMENT VIEW2 (<font color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Right field view
+name. This node is used in conjunction with FIELD2 and TABLE2 nodes. </span>This node is
+used only if both USEEXPRESSION and USECONDITION are False (0).</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT JEXPRESSION (#PCDATA)&gt;">&lt;!ELEMENT EXPRESSION (<font
+color="#800000">#PCDATA</font>)&gt; </a></span></b></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">You can use SQL
+expression on the right part of a join condition in a join relationship. An expression is
+used if USEEXPRESSION=1 (True) and USECONDITION=0 (False). The following syntax is used
+for fields in the expression: </span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">[View name]![Table
+name].[Field name].</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT JUSEEXPRESSION (#PCDATA)&gt;">&lt;!ELEMENT USEEXPRESSION (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Contains 1 if an an expression (EXPRESSION node) is used instead of a
+right side field. Contains 0 if a field (FIELD2/TABLE2/VIEW2 nodes) is used on the right
+side.</p>
+
+<p class="MsoNormal"><a name="&lt;!ELEMENT JCONDITION (#PCDATA)&gt;"><b
+style="mso-bidi-font-weight:normal"><span lang="EN-US" style="mso-ansi-language:EN-US">&lt;!ELEMENT
+CONDITION (<font color="#800000">#PCDATA</font>)&gt;</span></b></a></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">The complete join
+condition is specified as an SQL text, without differentiating between its left and right
+side. This node has effect only if USECONDITION=1 (True). The following syntax is used for
+fields in the condition: </span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">[View name]![Table
+name].[Field name].</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT JUSECONDITION (#PCDATA)&gt;">&lt;!ELEMENT USECONDITION (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Contains 1 (True)
+if an SQL condition (CONDITION node) is used. If this node is set to 1, FIELD1,FIELD2 and
+EXPRESSION nodes are ignored. The SQL condition text is stored in the CONDITION node. In
+other cases, this node is set to 0 (False). </span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT CONDRELATIONS (CONDRELATION*)&gt;">&lt;!ELEMENT CONDRELATIONS (<font
+color="#008000">CONDRELATION*</font>)&gt;<o:p></o:p></a></span></b></p>
+
+<p class="MsoNormal">This element stores information about condition relationships
+(CONDRELATION elements). </p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT CONDRELATION (RELATEVIEWS, CONDITION)&gt;"><b
+style="mso-bidi-font-weight:normal">&lt;!ELEMENT CONDRELATION (<font color="#008000">RELATEVIEWS,
+CONDITION</font>)&gt;<o:p></o:p></b></a></span></p>
+
+<p class="MsoNormal">Contains information about views and conditions of the condition
+relationship.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT CJRELATEVIEWS (VIEWNAME*)&gt;">&lt;!ELEMENT RELATEVIEWS (<font
+color="#008000">VIEWNAME*</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Contains a collection of VIEWNAME nodes representing the names of the
+views participating in the condition relationship.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT CJVIEWNAME (#PCDATA)&gt;">&lt;!ELEMENT VIEWNAME (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></b></p>
+
+<p class="MsoNormal">Contain a view name.<br>
+<br>
+<span lang="EN-US" style="mso-ansi-language:EN-US"></o:p><o:p>&nbsp;</o:p><a href="#top">Back to top</a><br>
+</span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><a name="&lt;!ELEMENT CJCONDITION (#PCDATA)&gt;">&lt;!ELEMENT
+CONDITION (<font color="#800000">#PCDATA</font>)&gt;<br>
+</a><br>
+</span></b>Contains the SQL condition of this condition relationship. </p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><b style="mso-bidi-font-weight:normal"><span lang="EN-US"
+style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT FOLDER(FOLDERNAME, SUBFOLDERS, FOLDERFIELDS)&gt;">&lt;!ELEMENT
+FOLDER(<font color="#008000">FOLDERNAME, SUBFOLDERS?, FOLDERFIELDS</font>?)&gt;<o:p></o:p></a></span></b></p>
+
+<p class="MsoNormal">Contains information about a schema folder. Since folders are
+organized in ierachical structure, a FOLDER element can contain nested FOLDER elements
+inside a SUBFOLDERS node. </p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT FOLDERNAME (#PCDATA)&gt;"><strong>&lt;!ELEMENT FOLDERNAME (<font
+color="#800000">#PCDATA</font>)&gt;</strong></a></span></p>
+
+<p class="MsoNormal">Contains the folder name.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT SUBFOLDERS (FOLDER*)&gt;">&lt;!ELEMENT SUBFOLDERS (<font
+color="#008000">FOLDER*</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal">Contains a collection of child (nested) folders.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT FOLDERFIELDS (FOLDERFIELD*)&gt;">&lt;!ELEMENT FOLDERFIELDS (<font
+color="#008000">FOLDERFIELD*</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Contains the
+collection of folder fields. </span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a
+name="&lt;!ELEMENT FOLDERFIELD (DISPLAYNAME, ALIASNAME, VIEW, NAME, TABLENAME, USESLOOKUPS, LOOKUPVALUES)&gt;">&lt;!ELEMENT
+FOLDERFIELD (<font color="#008000">DISPLAYNAME?, ALIASNAME?, VIEW, NAME, TABLENAME,
+USESLOOKUPS?, LOOKUPVALUES</font>?)&gt;</a></span></strong></p>
+
+<p class="MsoNormal">Represents a folder field.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT DISPLAYNAME (#PCDATA)&gt;">&lt;!ELEMENT DISPLAYNAME (<font
+color="#800000">#PCDATA</font>)&gt; </a></span></strong></p>
+
+<p class="MsoNormal">Contains the display name of the folder field. This node corresponds
+to the Name property on the Properties tab of the Folder Designer.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT ALIASNAME (#PCDATA)&gt;">&lt;!ELEMENT ALIASNAME (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal">Contains the alias used in generated SQL for this folder field. This
+node corresponds to the Alias property on the Properties tab of the Folder Designer.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a><br>
+</span></p>
+
+<p class="MsoNormal"><a name="&lt;!ELEMENT TAG (#PCDATA)&gt;"><strong><span lang="EN-US"
+style="mso-ansi-language:EN-US">&lt;!ELEMENT TAG (<font color="#800000">#PCDATA</font>)&gt;</span></strong></a></p>
+
+<p class="MsoNormal">Stores a string(or any other) data as part of the folder field. This
+node corresponds to the Custom data(Tag) property on the Properties tab of the Folder
+Designer.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT VIEW (#PCDATA)&gt;">&lt;!ELEMENT VIEW (<font color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal">Contains the view name of the view field represented by the folder
+field.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT NAME (#PCDATA)&gt;">&lt;!ELEMENT NAME (<font color="#800000">#PCDATA</font>)&gt;
+</a></span></strong></p>
+
+<p class="MsoNormal">Contains the name of the view field represented by the folder field.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT FTABLENAME (#PCDATA)&gt;">&lt;!ELEMENT TABLENAME (<font
+color="#800000">#PCDATA</font>)&gt; </a></span></strong></p>
+
+<p class="MsoNormal">Contains the table name of the view field represented by the folder
+field.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT USESLOOKUPS (#PCDATA)&gt;">&lt;!ELEMENT USESLOOKUPS (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal">If this node is set to 1 (True), the end user can select a value for
+this folder field in a C1QueryFrame control from a predefined list of values. The list of
+values is specified in the LOOKUPVALUES node. Possible values: </p>
+
+<p class="MsoNormal">0 (False): Lookup values are not used;<br>
+1 (True): Lookup values are used.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT LOOKUPVALUES (VALUE*)&gt;">&lt;!ELEMENT LOOKUPVALUES (<font
+color="#008000">VALUE*</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal">Contains the lookup list of values for this folder field. </p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT VALUE (USDATA, CAPTION)&gt;"><strong>&lt;!ELEMENT VALUE (<font
+color="#008000">USDATA, CAPTION</font>)&gt;</strong></a></span></p>
+
+<p class="MsoNormal">A Value/Caption pair representing an element of the lookup list. The
+Value part is used when C1Query generates SQL statement. The Caption part is used to
+display this value in the C1QueryFrame control (both as the selected value in a query item
+and in the dropdown list where lookup values are presented for selection).</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT USDATA (#PCDATA)&gt;">&lt;!ELEMENT USDATA (<font color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal">Contains the Value part of the Value/Caption pair. Each lookup value
+is stored as a string. This string is always encoded in English (United States) locale,
+regardless of the current regional settings. For example, if you are in Germany, you still
+need to specify numeric lookup values as &quot;123.45&quot; (in US format), not as
+&quot;123,45&quot;. String values are stored in UTF-8 format <br>
+</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT CAPTION (#PCDATA)&gt;">&lt;!ELEMENT CAPTION (<font color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal">Contains the Caption part of the Value/Caption pair. If the caption
+is empty, C1QueryFrame control displays the default string representation of the value. </p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><strong><br>
+</strong><a name="&lt;!ELEMENT EXTENSIONS (EXTENSION*)&gt;"><b
+style="mso-bidi-font-weight:normal">&lt;!ELEMENT EXTENSIONS (<font color="#008000">EXTENSION*</font>)&gt;<o:p></o:p></b></a></span></p>
+
+<p class="MsoNormal">This element contains the collection of schema extensions. Each
+extension is represented by an EXTENSION node.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT EXTENSION (EXTENDED, EXTENDS)&gt;"><strong>&lt;!ELEMENT EXTENSION (<font
+color="#008000">EXTENDED, EXTENDS</font>)&gt;</strong></a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Contains
+information about a schema extension.</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT EXTENDED (VIEWNAME*)&gt;">&lt;!ELEMENT EXTENDED (<font
+color="#008000">VIEWNAME*</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Contains the list
+of views after applying the extension.</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT XVIEWNAME (#PCDATA)&gt;">&lt;!ELEMENT VIEWNAME (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Represents an
+element in the collection of view names.</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT EXTENDS (VIEWNAME*)&gt;">&lt;!ELEMENT EXTENDS (<font color="#008000">VIEWNAME*</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal">Contains the list of views before applying the extension.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><strong><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT XXVIEWNAME (#PCDATA)&gt;">&lt;!ELEMENT VIEWNAME (<font
+color="#800000">#PCDATA</font>)&gt;</a></span></strong></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Represents an
+element in the collection of view names.</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT CATALOGS (CATALOG*)&gt;"><b style="mso-bidi-font-weight:normal">&lt;!ELEMENT
+CATALOGS (<font color="#008000">CATALOG*</font>)&gt;<o:p></o:p></b></a></span></p>
+
+<p class="MsoNormal">This elements contains a collection of so called catalogs (also known
+as view groups). Catalogs are independent groups of views. All views in a group are
+connected with relationships or join groups, and no two views belonging to different
+groups are connected. A schema can contain a single view group, or multiple view groups.
+Each of them can be used (only one at a time) in a user query. The C1Query.MainViewName
+property determines which catalog is currently used. The default is the first catalog.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT CATALOG (VIEW*)&gt;"><b style="mso-bidi-font-weight:normal">&lt;!ELEMENT
+CATALOG (<font color="#008000">VIEW*</font>)&gt;<o:p></o:p></b></a></span></p>
+
+<p class="MsoNormal">Contains the collection of views comprising this view group.</p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US"><br>
+<a name="&lt;!ELEMENT CATVIEW (#PCDATA)&gt;"><b style="mso-bidi-font-weight:normal">&lt;!ELEMENT
+VIEW (<font color="#800000">#PCDATA</font>)&gt;</b></a></span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">Contains a view
+name<b style="mso-bidi-font-weight:normal"><o:p></o:p></b>.</span></p>
+
+<p class="MsoNormal"><span lang="EN-US" style="mso-ansi-language:EN-US">&nbsp;</o:p><o:p>&nbsp;</o:p><a
+href="#top">Back to top</a></span></p>
+</body>
+</html>

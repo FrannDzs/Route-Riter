@@ -1,0 +1,10 @@
+TK_Utils - Archibald, Horace, Mapper & Zipper
+Archibald is a tree view editor for MSTS files capable of 
+reading/writing compressed shape, terrain and world files.
+Horace is a route converter when doing changes to the
+tsection.dat file like installing XTracks first time.
+Mapper is for doing maps and profiles of routes.
+Zipper last but not least is an easy to use compression 
+utility that also handles folders. This is a maintenance 
+update without new functionality to handle some special s-files. 
+By Okrasa Ghia.

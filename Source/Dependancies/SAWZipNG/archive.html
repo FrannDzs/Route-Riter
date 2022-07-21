@@ -1,0 +1,893 @@
+<html>
+ <head>
+  <title>Archive object</title>
+  <style>
+   body, table, td, th, a
+   {
+     font-size:x-small;
+     font-family:verdana;
+   }
+   
+   .label
+   {
+     font-weight:bold;
+   }
+   
+   h3
+   {
+     border-style:solid;
+     border-color:blue;
+     border-top-width:1px;
+     border-left-width:1px;
+     border-right-width:1px;
+     border-bottom-width:1px;
+     background-color:#A5C9EF;
+     padding:3pt;
+   }
+   
+   table, td
+   {
+     border-style:dotted;
+     border-color:black;
+     border-top-width:1px;
+     border-left-width:1px;
+     border-right-width:1px;
+     border-bottom-width:1px;
+     padding:3pt;
+     border-collapse:collapse;
+   }
+  </style>
+ </head>
+ <body>
+  <h1>Archive object</h1>
+  <h2>Properties</h2>
+  <a name="ArchivePath"><h3>ArchivePath</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>String</td>
+    <td width="10%">Read</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+     Returns the path of the archive.
+    </td>
+   </tr>
+  </table>
+  <a name="AutoFlush"><h3>AutoFlush</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>Boolean</td>
+    <td width="10%">Read/Write</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+     When AutoFlush is true, the archive is flushed after each operation that
+     changes the archive (adding, deleting and modifying the archive
+     comment and file comment). For a big archive setting AutoFlush to true,
+     can influence the performance.
+    </td>
+   </tr>
+  </table>
+  <a name="CaseSensitivity"><h3>CaseSensitivity</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>Boolean</td>
+    <td width="10%">Read/Write</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+     Set the case-sensitivity of <a href="#FindFile">FindFile</a> and
+     <a href="#FindFiles">FindFiles</a>.
+    </td>
+   </tr>
+  </table>
+  <a name="Closed"><h3>Closed</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>Boolean</td>
+    <td width="10%">Read</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+     Returns true when the archive is closed. False when the archive is opened.
+    </td>
+   </tr>
+  </table>
+  <a name="Comment"><h3>Comment</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>String</td>
+    <td width="10%">Read/Write</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+     Get/Set the comment of the archive.
+    </td>
+   </tr>
+  </table>
+  <a name="Count"><h3>Count</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>Long</td>
+    <td width="10%">Read</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+     Returns the number of files and directories in the archive. See also
+     <a href="#DirCount">DirCount</a> and <a href="#FileCount">FileCount</a>.
+    </td>
+   </tr>
+  </table>
+  <a name="CurrentDisk"><h3>CurrentDisk</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>Integer</td>
+    <td width="10%">Read</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+     Returns the current disk of the spanning archive.
+    </td>
+   </tr>
+  </table>
+  <a name="DirCount"><h3>DirCount</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>Long</td>
+    <td width="10%">Read</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+     Returns the number of directories the archive. See also
+     <a href="#Count">Count</a> and <a href="#FileCount">FileCount</a>.
+    </td>
+   </tr>
+  </table>
+  <a name="EnableFindFast"><h3>EnableFindFast</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>Boolean</td>
+    <td width="10%">Read/Write</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+     Enables fast finding by the file name of the files inside the archive.
+     See <a href="#FindFile">FindFile</a> and <a href="#FindFiles">FindFiles</a>.
+    </td>
+   </tr>
+  </table>
+  <a name="FileCount"><h3>FileCount</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>Long</td>
+    <td width="10%">Read</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+     Returns the number of files in the archive. See also
+     <a href="#Count">Count</a> and <a href="#DirCount">DirCount</a>.
+    </td>
+   </tr>
+  </table>
+  <a name="GeneralBufferSize"><h3>GeneralBufferSize</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>Long</td>
+    <td width="10%">Read/Write</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+    Get/Set the size of the general buffer. This buffer is used in extracting,
+    compressing, deleting and renaming files. The minimum size is 1024.
+    The default is 65536.
+    </td>
+   </tr>
+  </table>
+  <a name="IgnoreCrc"><h3>IgnoreCrc</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>Boolean</td>
+    <td width="10%">Read/Write</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+    When IgnoreCrc is set to true, CRC is not checked for the files being
+    tested or extracted. This can be useful when working with Java TM Archives (jar).
+    The CRC is checked by default.
+    </td>
+   </tr>
+  </table>
+  <a name="Password"><h3>Password</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>String</td>
+    <td width="10%">Read/Write</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+     When adding files the password will be used to encrypt the files. When
+     extracting files, the password will be used to decrypt the files. Set the
+     password before adding or extracting files. Use an empty String "" to
+     stop encryption.
+    </td>
+   </tr>
+  </table>
+  <a name="Readonly"><h3>Readonly</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>Boolean</td>
+    <td width="10%">Read</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+     Returns true when the archive is readonly.
+    </td>
+   </tr>
+  </table>
+  <a name="RootPath"><h3>RootPath</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>String</td>
+    <td width="10%">Read/Write</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+    When the root path is set, this path will be omitted from the file that
+    is added to the archive (Relative paths). Set this property before you
+    start adding files. Use an empty String "" to use full paths again.
+    </td>
+   </tr>
+  </table>
+  <a name="SearchBufferSize"><h3>SearchBufferSize</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>Long</td>
+    <td width="10%">Read/Write</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+    Get/Set the size of the searchbuffer. This buffer is used to search for
+    the central dir. The minimum size is 1024. The default is 32768.
+    </td>
+   </tr>
+  </table>
+  <a name="SpanMode"><h3>SpanMode</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>SpanMode</td>
+    <td width="10%">Read</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+     Returns the span mode of the archive.
+    </td>
+   </tr>
+  </table>
+  <a name="SystemCompatibility"><h3>SystemCompatibility</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>ZipPlatform</td>
+    <td width="10%">Read/Write</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+    Get/Set the System compatibility. This property influences the file attribute
+    conversion.
+    </td>
+   </tr>
+  </table>
+  <a name="TempPath"><h3>TempPath</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>String</td>
+    <td width="10%">Read/Write</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+     Get/Set the temporary path. This path is used when compressing files and
+     SM_CHECK_FOR_EFF is used for smartness in <a href="#AddFile">AddFile</a>
+     and the disk spanning archive is in creation
+    </td>
+   </tr>
+  </table>
+  <a name="WriteBufferSize"><h3>WriteBufferSize</h3></a>
+  <table width="100%">
+   <tr>
+    <td width="10%" class="label">Type</td>
+    <td>Long</td>
+    <td width="10%">Read/Write</td>
+   </tr>
+   <tr>
+    <td colspan="3">
+    Get/Set the size of the writebuffer. This buffer is used to hold data
+    before it is written to disk. The optimal size for the write buffer in the
+    disk spanning archive is the size of the volume. The minimum size is 1024.
+    The default is 65536.
+    </td>
+   </tr>
+  </table>
+  <h2>Methods</h2>
+  <a name="AddFile"><h3>AddFile</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function AddFile(filename As String, [fullpath As Boolean = True], [level As Integer = -1], [smartLevel As Smartness = SM_SMART_SAFE], [bufferSize As Long = 65536]) As Boolean
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">filename</td>
+    <td>The name of the file to add</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">fullpath</td>
+    <td>When true, the file is stored with the full path information. Otherwise
+    the <a href="#RootPath">RootPath</a> is removed from the file path.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">level</td>
+    <td>The level of compression (-1, 0 - 9). 0 means no compression, 9 means
+     best compression. -1 is the default (6).</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">smartLevel</td>
+    <td>The level of <a href="#Smartness">Smartness</a>.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">bufferSize</td>
+    <td>The size of the buffer.</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Adds a file to the archive. True is returned on success.
+    </td>
+   </tr>
+  </table>
+  <a name="AddFileAs"><h3>AddFileAs</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function AddFileAs(filename As String, nameInZip As String, [level As Integer = -1], [smartLevel As Smartness = SM_SMART_SAFE], [bufferSize As Long = 65536]) As Boolean
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">filename</td>
+    <td>The name of the file to add</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">nameInZip</td>
+    <td>The name to use for this file in the archive</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">level</td>
+    <td>The level of compression (-1, 0 - 9). 0 means no compression, 9 means
+     best compression. -1 is the default (6).</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">smartLevel</td>
+    <td>The level of <a href="#Smartness">Smartness</a>.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">bufferSize</td>
+    <td>The size of the buffer.</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Adds a file to the archive with another name. Returns true on success.
+    </td>
+   </tr>
+  </table>
+  <a name="AddFolder"><h3>AddFolder</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function AddFolder(foldername As String, [includeSubDirs As Boolean = True], [fullpath As Boolean = True], [level As Integer = -1], [smartLevel As Smartness = SM_SMART_SAFE], [bufferSize As Long = 65536]) As Boolean
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">filename</td>
+    <td>The name of the folder to add</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">includeSubDirs</td>
+    <td>When true, the subdirectories are also added to the archive.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">fullpath</td>
+    <td>When true, each file is stored with the full path information. Otherwise
+    the <a href="#RootPath">RootPath</a> is removed from the file path.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">level</td>
+    <td>The level of compression (-1, 0 - 9). 0 means no compression, 9 means
+     best compression. -1 is the default (6).</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">smartLevel</td>
+    <td>The level of <a href="#Smartness">Smartness</a>.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">bufferSize</td>
+    <td>The size of the buffer.</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Adds all files in the folder to the archive. True is returned on success.
+    </td>
+   </tr>
+  </table>
+  <a name="AddFolderWithWildcard"><h3>AddFolderWithWildcard</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function AddFolderWithWildcard(foldername As String, wildcard As String, [includeSubDirs As Boolean = True], [fullpath As Boolean = True], [level As Integer = -1], [smartLevel As Smartness = SM_SMART_SAFE], [bufferSize As Long = 65536]) As Boolean    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">filename</td>
+    <td>The name of the folder to add</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">wildcard</td>
+    <td>A wildcard</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">includeSubDirs</td>
+    <td>When true, the subdirectories are also added to the archive.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">fullpath</td>
+    <td>When true, each file is stored with the full path information. Otherwise
+    the <a href="#RootPath">RootPath</a> is removed from the file path.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">level</td>
+    <td>The level of compression (-1, 0 - 9). 0 means no compression, 9 means
+     best compression. -1 is the default (6).</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">smartLevel</td>
+    <td>The level of <a href="#Smartness">Smartness</a>.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">bufferSize</td>
+    <td>The size of the buffer.</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Searches for files with the wildcard and adds them to the archive. True is returned on success.
+    </td>
+   </tr>
+  </table>
+  <a name="Close"><h3>Close</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Sub Close()
+    </td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Closes the archive.
+    </td>
+   </tr>
+  </table>
+  <a name="Create"><h3>Create</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Sub Create(filename As String, [CreateMode As CreateMode = CM_CREATE], [volumeSize As Long])
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">filename</td>
+    <td>The name of the archive</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">CreateMode</td>
+    <td>See <a href="#CreateMode">CreateMode</a></td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">volumeSize</td>
+    <td>Set the volumnSize > 0 to create a TD span archive.</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Creates a new archive.
+    </td>
+   </tr>
+  </table>
+  <a name="DeleteFile"><h3>DeleteFile</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Sub DeleteFile(index As Long)
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">index</td>
+    <td>The index of the file to delete from the archive</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Deletes the file from the archive.
+    </td>
+   </tr>
+  </table>
+  <a name="DeleteFiles"><h3>DeleteFiles</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Sub DeleteFiles(indexes As Variant)
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">indexes</td>
+    <td>A variant that contains an array of <i>Long</i> elements.
+    </td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Deletes all the files with the indexes.
+    </td>
+   </tr>
+  </table>
+  <a name="Extract"><h3>Extract</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function Extract(index As Long, path As String, [fullpath As Boolean = True], [bufferSize As Long = 65536]) As Boolean
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">index</td>
+    <td>The index of the file in the archive</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">path</td>
+    <td>The path where the file is created.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">fullpath</td>
+    <td>When false, the path is removed from the filename before extracting.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">bufferSize</td>
+    <td>The size of the buffer.</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Extracts a file from the archive. Returns true on success.
+    </td>
+   </tr>
+  </table>
+  <a name="ExtractAs"><h3>ExtractAs</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function ExtractAs(index As Long, path As String, newName As String, [fullpath As Boolean = True], [bufferSize As Long = 65536]) As Boolean
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">index</td>
+    <td>The index of the file in the archive</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">path</td>
+    <td>The path where the file is created.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">newName</td>
+    <td>A new name for the extracted file.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">fullpath</td>
+    <td>When false, the path is removed from the filename before extracting.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">bufferSize</td>
+    <td>The size of the buffer.</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Extracts a file from the archive and gives it another name. Returns true on success.
+    </td>
+   </tr>
+  </table>
+  <a name="FindFile"><h3>FindFile</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function FindFile(filename As String, [caseSensitive As FFCaseSensitivity = FF_DEFAULT], [filenameOnly As Boolean = False]) As Long
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">filename</td>
+    <td>The name of the file to search for.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">caseSensitive</td>
+    <td>See <a href="#OpenMode">FFCaseSensitivity</a></td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">filenameOnly</td>
+    <td>When true, FindFile tries to find a filename without a path.</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Searches for file in the archive. When found it returns the index. -1 is returned
+     when the file is not found.
+    </td>
+   </tr>
+  </table>
+  <a name="FindFiles"><h3>FindFiles</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function FindFiles(Pattern As String, [fullpath As Boolean = True]) As Variant
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">Pattern</td>
+    <td>A pattern string:<br />
+        <li>* matches any sequence of characters(zero or more)
+        <li>? matches any character
+        <li>[SET] matches any character in the specified set,
+        <li>[!SET] or[^SET] matches any character not in the specified set
+        <br />
+        To suppress the special syntactic significance of any of []*?!^-\, and match the character exactly, precede it with a \
+        <br />
+        The case-sensitivity of the pattern is set to <a href="#CaseSensitivity">CaseSensitivity</a>.
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">filenameOnly</td>
+    <td>When true, FindFile tries to find a filename without a path.</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     This function finds the indexes of the files, which filenames match the specified pattern.
+    </td>
+   </tr>
+  </table>
+  <a name="Flush"><h3>Flush</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Sub Flush()
+    </td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Writes the central dir and the internal buffers to disk.
+     Use it after modifying the archive if you want to prevent the loss of the data
+     you've compressed so far in case of a program crash. When <a href="#AutoFlush">AutoFlush</a>
+     is true, you don't need to call this function.
+    </td>
+   </tr>
+  </table>
+  <a name="GetFileInfo"><h3>GetFileInfo</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function GetFileInfo(index As Long) As FileInfo
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">index</td>
+    <td>The index of a file in the archive.</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Returns the FileInfo object of the given file
+    </td>
+   </tr>
+  </table>
+  <a name="GetIndexes"><h3>GetIndexes</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function GetIndexes(filenames As Variant) As Variant
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">filenames</td>
+    <td>A Variant which contains an array of String elements.</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Returns a Variant which contains an array of Long elements. This
+     array contains all indexes it has found.
+    </td>
+   </tr>
+  </table>
+  <a name="Open"><h3>Open</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Sub Open(filename As String, [OpenMode As OpenMode = OM_OPEN], [volumeSize As Long])
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">filename</td>
+    <td>The name of the archive</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">OpenMode</td>
+    <td>See <a href="#OpenMode">OpenMode</a></td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">volumeSize</td>
+    <td>Set the volumnSize > 0 to open a TD span archive.</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Opens an existing archive.
+    </td>
+   </tr>
+  </table>
+  <a name="PredictExtractedFileName"><h3>PredictExtractedFileName</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function PredictExtractedFileName(FileNameInZip As String, path As String, fullpath As Boolean, newName As String) As String
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">FileNameInZip</td>
+    <td>The name of the file in the archive</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">path</td>
+    <td>The path where the file is created.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">fullpath</td>
+    <td>When false, the path is removed from the filename before extracting.</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">newName</td>
+    <td>A new name for the extracted file.</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Returns the full filename with path after extraction.
+    </td>
+   </tr>
+  </table>
+  <a name="PredictFileNameInZip"><h3>PredictFileNameInZip</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function PredictFileNameInZip(filename As String, [fullpath As Boolean = True], [Exact As Boolean = False]) As String
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">filename</td>
+    <td>The name of the file</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">fullpath</td>
+    <td>When false, the path is removed from the filename</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">Exact</td>
+    <td>When true, return the filename exactly as it would look inside the archive i.e.
+        convert slash to backslash, and perform ANSI->OEM conversion; otherwise return the
+        filename with the path separators that are used by default in the system.</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Returns the filename as it would be stored in the archive.
+    </td>
+   </tr>
+  </table>
+  <a name="RenameFile"><h3>RenameFile</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function RenameFile(index As Long, newFilename As String) As Boolean
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">index</td>
+    <td>The index of the file to rename</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">newFilename</td>
+    <td>The new filename</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Renames the file. Returns true on success.
+    </td>
+   </tr>
+  </table>
+  <a name="SetFileComment"><h3>SetFileComment</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Sub SetFileComment(index As Long, Comment As String)
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">index</td>
+    <td>The index of the file</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">Comment</td>
+    <td></td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Sets the comment for a file.
+    </td>
+   </tr>
+  </table>
+  <a name="TestFile"><h3>TestFile</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function TestFile(index As Long, [bufferSize As Long = 65536]) As Boolean
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">index</td>
+    <td>The index of the file</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">bufferSize</td>
+    <td>The size of the buffer used to test the file</td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Test the file with the given index for the integrity.
+    </td>
+   </tr>
+  </table>
+  <a name="WillBeDuplicated"><h3>WillBeDuplicated</h3></a>
+  <table width="100%">
+   <tr>
+    <td colspan="2" class="label">
+     Function WillBeDuplicated(FilePath As String, [fullpath As Boolean = True], [filenameOnly As Boolean = False]) As Long
+    </td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">FilePath</td>
+    <td>The name of the file</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">fullpath</td>
+    <td>When false, the path is removed from the filename</td>
+   </tr>
+   <tr>
+    <td class="label" width="15%">filenameOnly</td>
+    <td></td>
+   </tr>
+   <tr>
+    <td colspan="2">
+     Check if the filename will be duplicated in the archive, if added to the archive in the given form.
+     Returns the zero-based index of the file in the archive that would be duplicated, or -1,
+     if the filename is unique.
+    </td>
+   </tr>
+  </table>
+ </body>
+</html>

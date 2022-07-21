@@ -1,0 +1,26 @@
+1	wunc   	 Uncompress world-files (ffeditc_unicode) 
+2	wcmp   	 Compress world-files to binary format (ffeditc_unicode) 
+3	wcmpo  	 Compress world-files to binary format (only) (ffeditc_unicode)
+4	cmkr   	 Convert '.coo'-file to marker-file 
+5	fmgr   	 Compress/Decompress/Reduce/Expand of file(s)/filegroups (S/T/W) 
+6	chgdb  	 Change shape-/section-references in track-Database "*.tdb"/"*.rdb" 
+7	dcpy   	 Compare file-dates and copy if newer 
+8	shift  	 Shift/renumber block of global Shape/Section-definitions within 'tsection.dat' 
+9	filter 	 Verification and Correction of the Route Geometry 
+10	cmpw   	 Compress world-files using the Martyn Griffin's 'Comp' program 
+11	tsconv 	 Convert ALL route-definitions of a TS-Instance according to 'cvrt' 
+12	ichk   	 Integrity-check of a route-definition 
+13	rendb  	 Modify track-database (*.tdb/*.rdb) and delete gaps 
+14	move   	 Shift complete route-definition to new longitude/lattitude 
+15	chkup  	 Check a global 'tsection.dat'-File to be used as upgrade for an OLD one 
+16	adjh   	 Change altitude of a Route 
+17	cmp    	 Reduce/Compress files (S/T/W) to binary format 
+18	unc    	 Uncompress/expand files (S/T/W) 
+19	merge  	 Merge a route-definition into another route 
+20	clrdb  	 Reorganization of databases (track/road) and resources 
+21	zusi   	 Prepare a route-defintion for import into ZUSI-Trainsimulator
+22	shftdyn	 Shift dynamic definitions of local 'tsection.dat' to current position 
+23	version	 Show/print internal ID-values of known TSUil-classes 
+24	cvrt	 Convert - adjust and correct a complete route-definition after change of tsection.dat etc.
+25	cvrt1	 Convert - uses cvrt to fix invalid Soundsource positioning
+26 	cvrt2	 Convert - use of cvrt to produce a 'Hidewire' functionality on Electric / Non-electric routes.

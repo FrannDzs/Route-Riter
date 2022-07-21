@@ -1,0 +1,19 @@
+Comment: You may manually edit these formulae, extra Key lines can
+Comment: possibly be added by request.
+Comment: Valid variables are $Mass (Mass from .eng/.wag file)
+Comment: $CentreOfGravity (COG from .eng/.wag file, if absent object height/2 is used)
+Comment: $Shape.MinX, $Shape.MinZ, $Shape.MaxX, $Shape.MaxY, $Shape.maxZ
+
+#DerailBufferForce
+(($Mass - 20) * 2.365) + 375 
+
+#DerailRailForce
+(7.03 / $CentreOfGravity) * $Mass
+
+#ESD_Bounding_Box
+$Shape.MinX 
+0.3 
+$Shape.MinZ + 0.1 
+$Shape.MaxX 
+max($Shape.MaxY, 2.5) 
+$Shape.MaxZ - 0.1

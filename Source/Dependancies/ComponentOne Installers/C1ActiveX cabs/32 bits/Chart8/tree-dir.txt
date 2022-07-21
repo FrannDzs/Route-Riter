@@ -1,0 +1,346 @@
+Following are descriptions of files contained in this
+directory.
+
+=
+|
+|
++---bin
+|
+|       olch2d8.dll        - ComponentOne Chart 2D API dll.  Used by
+|                            programs which access the 2D ANSI Chart
+|                            through an import library.
+|
+|       olch2du8.dll       - Unicode version of olch2d8.dll
+|                            (Windows NT, Windows 2000 and Windows XP only)
+|
+|       olch2x8.ocx        - ComponentOne Chart 2D Com Interfaced OCX / ActiveX
+|                            for the 2D ANSI Chart.  Used by VB.
+|
+|       olch2xu8.ocx       - Unicode version of olch2x8.ocx
+|                            (Windows NT, Windows 2000 and Windows XP only)
+|
+|       olch3d8.dll        - ComponentOne Chart 3D API dll.  Used by programs
+|                            which access the 3D ANSI Chart through
+|                            an import library.
+|
+|       olch3du8.dll       - Unicode version of olch3d8.dll
+|                            (Windows NT, Windows 2000 and Windows XP only)
+|
+|       olch3x8.ocx        - ComponentOne Chart 3D Com Interfaced OCX / ActiveX
+|                            for the 3D ANSI Chart.  Used by VB.
+|
+|       olch3xu8.ocx       - Unicode version of olch3x8.ocx
+|                            (Windows NT, Windows 2000 and Windows XP only)
+|
+|       c1regsvr.exe       - Console program to force a design registration
+|                            for side-by-side operating systems.
+|
+|       c1regsvw.exe       - Windows program to force a design registration
+|                            for side-by-side operating systems.
+|
++---cab
+|
+|       olch2x8.cab        - cab file for 2D OCX and INF for general install
+|                            of the OCX through Microsoft Internet Explorer
+|
+|       olch3x8.cab        - cab file for 3D OCX and INF for general install
+|                            of the OCX through Microsoft Internet Explorer
+|
+|       olch2xu8.cab       - cab file for 2D Unicode OCX and INF for general
+|                            install of the OCX through Microsoft Internet
+|                            Explorer
+|
+|       olch3xu8.cab       - cab file for 3D Unicode OCX and INF for general
+|                            install of the OCX through Microsoft Internet
+|                            Explorer
+|
++---cab32
+|
+|       olch2x8dd11.cab    - cab file for 2D OCX and INF for system/system32
+|                            install of the OCX through Microsoft Internet
+|                            Explorer.  DestDir=11 is specified in the INF.
+|
+|       olch3x8dd11.cab    - cab file for 3D OCX and INF for system/system32
+|                            install of the OCX through Microsoft Internet
+|                            Explorer.  DestDir=11 is specified in the INF.
+|
+|       olch2xu8dd11.cab   - cab file for 2D Unicode OCX and INF for
+|                            system/system32 install of the OCX through
+|                            Microsoft Internet Explorer.  DestDir=11 is
+|                            specified in the INF.
+|
+|       olch3xu8dd11.cab   - cab file for 3D Unicode OCX and INF for
+|                            system/system32 install of the OCX through
+|                            Microsoft Internet Explorer.  DestDir=11 is
+|                            specified in the INF.
+|
+|
++---help
+|   |
+|   |   chart2d8.chm       - WinHelp helpfile with guidelines for using the
+|   |                        2D Chart ActiveX Control in VC++.
+|   | 
+|   |   chart3d8.chm       - WinHelp helpfile with guidelines for using the
+|   |                        3D Chart ActiveX Control in VC++.
+|   | 
+|   |   oc2d8api.chm       - WinHelp helpfile with guidelines for using the
+|   |                        2D API DLL.
+|   | 
+|   |   oc3d8api.chm       - WinHelp helpfile with guidelines for using the
+|   |                        3D API DLL.
+|   | 
+|   |   olch2d8p.chm       - WinHelp helpfile describing the 2D Chart ActiveX
+|   |                        Control objects.  Includes descriptions and
+|   |                        examples of how to use the control in code.
+|   | 
+|   |   olch2d8u.chm       - WinHelp helpfile describing the 2D Chart ActiveX
+|   |                        Control objects.  Includes descriptions of the
+|   |                        design-time and runtime property pages.  For
+|   |                        convenience, a link tp the programmer's help is
+|   |                        included in the contents file.
+|   | 
+|   |   olch3d8p.chm       - WinHelp helpfile describing the 3D Chart ActiveX
+|   |                        Control objects.  Includes descriptions and
+|   |                        examples of how to use the control in code.
+|   | 
+|   |   olch3d8u.chm       - WinHelp helpfile describing the 3D Chart ActiveX
+|   |                        Control objects.  Includes descriptions of the
+|   |                        design-time and runtime property pages.
+|   | 
+|   |   olch8t2.chm        - WinHelp helpfile providing a tutorial for using
+|   |                        the 2D Chart ActiveX Control.
+|   |
+|   |
+|   \---RuntimePropertyPageHelp
+|
+|       olch2d8u.chm      HtmlHelp helpfile describing the 2D Chart ActiveX        
+|                         Control objects.  Includes descriptions of the           
+|                         design-time and runtime property pages. (default)        
+|                                                                                  
+|       olch3d8u.chm      HtmlHelp helpfile describing the 3D Chart ActiveX Control
+|                         objects.  Includes descriptions of the design-time and   
+|                         runtime property pages. (default)                        
+|
+|       olch2d8u.hlp      WinHelp helpfile describing the 2D Chart ActiveX    
+|                         Control objects.  Includes descriptions of the      
+|                         design-time and runtime property pages.             
+|                                                                             
+|       olch2d8u.cnt      WinHelp contents describing for the 2D Chart ActiveX
+|                         Control objects.  Includes descriptions of the      
+|                         design-time and runtime property pages.             
+|                                                                             
+|       olch3d8u.hlp      WinHelp helpfile describing the 3D Chart ActiveX    
+|                         Control objects.  Includes descriptions of the      
+|                         design-time and runtime property pages.             
+|                                                                             
+|       olch3d8u.cnt      WinHelp contents describing for the 3D Chart ActiveX
+|                         Control objects.  Includes descriptions of the      
+|                         design-time and runtime property pages.             o
+|
+|       2dOcxUserWinHelpSourceFiles.zip
+|       3dOcxUserWinHelpSourceFiles.zip
+|
+|
+|
+|
+|   Following PDF files are expected to be available at a later date.
+|
+|       2D DLL Data Type Reference.pdf
+|       2D DLL Message Reference.pdf
+|       2D DLL Procedures and Methods Reference.pdf
+|       2D DLL Property Reference.pdf
+|       2D DLL Text Object Attribute Reference.pdf
+|       2D OCX Object Reference.pdf
+|
+|       3D DLL Data Type Reference.pdf
+|       3D DLL Message Reference.pdf
+|       3D DLL Procedures and Methods Reference.pdf
+|       3D DLL Property Reference.pdf
+|       3D DLL Text Object Attribute Reference.pdf
+|       3D OCX Object Reference.pdf
+|
+|       Chart Manual 1 - Overview.pdf
+|       Chart Manual 2 - OCX.pdf
+|       Chart Manual 3 - DLL-API.pdf
+|
++---include
+|
+|       2dconst.h          - enumerations and other constants used to
+|                            manipulate the ComponentOne Chart 2D Objects
+|                            using the OCX / ActiveX interfaces.
+|
+|       3dconst.h          - enumerations and other constants used to
+|                            manipulate the ComponentOne Chart 3D Objects
+|                            using the OCX / ActiveX interfaces.
+|
+|       och2dmfc.h         - these two files can be used to manipulate the
+|       och2dmfc.cpp         Chart 2D API objects (olch2x8.dll and
+|                            olch2x8u.dll with MFC.  Note that these files
+|                            are NOT used for the OCX interfaces.
+|
+|       och3dmfc.h         - these two files can be used to manipulate the
+|       och3dmfc.cpp         Chart 3D API objects (olch3x8.dll and
+|                            olch3x8u.dll with MFC.  Note that these files
+|                            are NOT used for the OCX interfaces.
+|
+|       oc_color.h         - contains a list of color definitions as used
+|                            by all ComponentOne Chart binaries wherever an
+|                            RGB ColorRef can be used.
+|
+|       olch2d.h           - contains declarations for all exported functions
+|                            of olch2d8.dll and olch2d8u.dll.  This file is
+|                            included by och2dmfc.h and och2dowl.h
+|
+|       olch2dcm.h         - contains the definitions, enumerations and
+|                            data structures used to manipulate the
+|                            Chart 2D API objects of olch2d8.dll and
+|                            olch2d8u.dll.  This file is included by olch2d.h.
+|
+|       olch3d.h           - contains declarations for all exported functions
+|                            of olch3d8.dll and olch3d8u.dll.  This file is
+|                            included by och3dmfc.h and och3dowl.h
+|
+|       olch3dcm.h         - contains the definitions, enumerations and
+|                            data structures used to manipulate the
+|                            Chart 3D API objects of olch3d8.dll and
+|                            olch3d8u.dll.  This file is included by olch3d.h.
+|
++---lib
+|
+|       olch2d8.lib        - Import library for olch2d8.dll using VC++
+|
+|       olch2du8.lib       - Import library for olch2du8.dll using VC++
+|                            (Windows NT, Windows 2000 and Windows XP only)
+|
+|       olch3d8.lib        - Import library for olch3d8.dll using VC++
+|
+|       olch3du8.lib       - Import library for olch3du8.dll using VC++
+|                            (Windows NT, Windows 2000 and Windows XP only)
+|
++---localize
+|
+|       olch2x8enu.dll     - English, resource only DLL for 2D Localization
+|
+|       olch2x8enu.zip     - Zip file containing source used to produce
+|                            English localized DLL for 2D Localization
+|
+|       olch2xu8enu.dll    - English, resource only DLL for 2D Localization
+|                            (Unicode)
+|
+|       olch2xu8enu.zip    - Zip file containing source used to produce
+|                            English localized DLL for 2D Localization
+|                            (Unicode)
+|
+|       olch3x8enu.dll     - English, resource only DLL for 3D Localization
+|
+|       olch3x8enu.zip     - Zip file containing source used to produce
+|                            English localized DLL for 3D Localization
+|
+|       olch3xu8enu.dll    - English, resource only DLL for 3D Localization
+|                            (Unicode)
+|
+|       olch3xu8enu.zip     - Zip file containing source used to produce
+|                            English localized DLL for 3D Localization
+|                            (Unicode)
+|
+|
+\---migration
+|   |
+|   \---vb                             - a Visual Basic project that can be
+|           clsControlData.cls           used to migrate from previous versions
+|           clsControlDesc.cls           projects to both ANSI and UNICODE
+|           MigrateControls.exe          ComponentOne Chart projects.
+|           MigrateControls.frm          ComponentOne Chart projects can also
+|           MigrateControls.vbp          be migrated to and from ANSI and UNICODE.
+|           MigrateControls.vbw
+|           readme.txt
+|
+|
+\---demos
+    \---chart               - Visual Basic and Visual C++ program demos and samples.
+        +---2d
+        |   +---data
+        |   +---demos
+        |   |   +---dll
+        |   |   |   +---mfc
+        |   |   |   |   +---oc2mfc
+        |   |   |   |   \---scrolltm
+        |   |   |   \---sdk
+        |   |   |       +---cashflow
+        |   |   |       +---dataload
+        |   |   |       +---panel
+        |   |   |       +---plot1
+        |   |   |       +---stock
+        |   |   |       \---time
+        |   |   +---internet
+        |   |   |   \---pie
+        |   |   +---vb
+        |   |   |   +---2d-ppg
+        |   |   |   +---actions
+        |   |   |   +---alarmz
+        |   |   |   +---box
+        |   |   |   +---bubbles
+        |   |   |   +---cg2bands
+        |   |   |   +---chlabels
+        |   |   |   +---databind
+        |   |   |   +---datastyl
+        |   |   |   +---errorbar
+        |   |   |   +---float
+        |   |   |   +---hlcandle
+        |   |   |   +---images
+        |   |   |   +---ionize
+        |   |   |   +---multi
+        |   |   |   +---pareto
+        |   |   |   +---pie
+        |   |   |   +---polar
+        |   |   |   +---print-it
+        |   |   |   +---radar
+        |   |   |   +---ranges
+        |   |   |   +---scatter
+        |   |   |   +---scrolltm
+        |   |   |   +---sfarray
+        |   |   |   +---spectra
+        |   |   |   +---stack
+        |   |   |   +---stripper
+        |   |   |   \---sweep
+        |   |   \---vc
+        |   |       +---chlabels
+        |   |       +---pareto
+        |   |       +---perf
+        |   |       +---radar
+        |   |       \---scrolltm
+        |   \---samples
+        +---3d
+        |   +---data
+        |   +---demos
+        |   |   +---dll
+        |   |   |   +---mfc
+        |   |   |   |   +---bars
+        |   |   |   |   \---oc3mfc
+        |   |   |   \---sdk
+        |   |   |       +---profile
+        |   |   |       +---scatter
+        |   |   |       \---simple
+        |   |   +---vb
+        |   |   |   +---3d-ppg
+        |   |   |   +---actions
+        |   |   |   +---bars
+        |   |   |   +---dstrange
+        |   |   |   +---images
+        |   |   |   +---math
+        |   |   |   +---print-it
+        |   |   |   +---profile
+        |   |   |   +---scatter
+        |   |   |   +---sfarray
+        |   |   |   +---shader
+        |   |   |   +---spline
+        |   |   |   \---surface
+        |   |   \---vc
+        |   |       +---bars
+        |   |       +---golfers
+        |   |       +---math
+        |   |       \---scatter
+        |   \---samples
+        \---utility
+            +---ShowOC2
+            \---ShowOC3

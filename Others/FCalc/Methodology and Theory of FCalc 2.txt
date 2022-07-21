@@ -1,0 +1,716 @@
+                       Methodology and Theory of FCalc 2.0
+
+                               By Joseph T. Realmuto
+
+
+Origin of FCalc 2.0
+
+	In July of 2001 I created the first version of FCalc in order to fix the grossly inaccurate 
+default MSTS train resistance.  As such, the improvement in realism was enormous, and FCalc 
+1.0 became the defacto standard for those seeking realistic physics.  I was able to obtain a 
+reasonably good match to the three term Davis equations for train resistance using the two terms 
+required by MSTS.  I used mostly trial and error, and settled on what I thought was the best fit 
+for a wide range of rolling stock types and speeds.  While it was not necessarily the best fit 
+possible, it was good enough for the purposes at the time, which was to replace the awful default 
+values.
+
+	Shortly after FCalc 1.0 was released I was asked several times about the possibility of 
+adapting it for rolling stock with solid bearings (friction bearings).  At the time I was unable to do 
+so because I lacked Davis resistance equations for solid bearings, and I also lacked the 
+methodology for simulating the characteristics of solid bearing trucks in MSTS.
+
+	The first step towards updating FCalc occurred in April of 2002.  By studying exactly how 
+MSTS uses the friction parameter I was able to devise a new method of simulating the much 
+higher starting resistance of solid bearing trucks.  I posted regarding this new method on the 
+Train-Sim.com forums.  However, because I still lacked equations for solid bearing rolling stock, 
+nothing further came of it at the time.
+
+	The first real steps towards FCalc 2.0 came in September of 2003.  James Titus posted 
+on Train-Sim.com about some modifications he had made to FCalc to simulate starting 
+resistance.  They were quite similar to the work I had done to simulate friction bearings over a 
+year earlier.  I exchanged several e-mails with him and examined his work, including his 
+spreadsheets.  He used spreadsheets to match his modified friction value curves to those 
+produced by my FCalc 1.0 program.  In the course of examining his work, I was inspired to take 
+another look at what I had done with FCalc 1.0, and see if I could get better curve matching.  The 
+tentative answer  was yes.   I still did not want to update FCalc until I was able to also 
+incorporate my work on solid bearings, so I filed the results for future use.
+
+	The final piece of the puzzle fell into place in late October of 2003.  Dave Nelson posted 
+some questions he had regarding friction in MSTS.  As the discussion evolved and I taught Dave 
+about how friction works in MSTS, I was able to refine my curve matching even more via a series 
+of exchanges of Excel spreadsheets.  Furthermore, Dave kindly furnished me with the Davis 
+equations for solid bearings.  I now had all I needed to go ahead and release a new, greatly 
+improved version of FCalc.  To be sure, there was still much to be done, but the major obstacles 
+had been overcome, and it was only a matter of refining my methodology and bringing it all 
+together. 
+
+	The final steps consisted of obtaining Davis resistance equations for as many types of 
+rolling stock as I could in order to make FCalc 2.0 as comprehensive as possible.  Work I had 
+done earlier assisting Clem Tillier with his TGV was instrumental in this regard for high-speed 
+trains.  For American freight trains Bob Boudoin's very comprehensive physics work was a great 
+source of empirical values which could be adapted into a new set of equations.  A copy I had of a 
+demo version of the Railsim train performance calculator confirmed some values I had only 
+estimated, and several other sources, including some anecdotal information by former 
+railroaders, completed the picture.
+
+
+Methodology of FCalc 2.0
+
+	The discussion of FCalc 2.0 methodology must begin with a review of how MSTS 
+calculates train resistance.  MSTS uses  ten terms in the friction parameter to calculate friction 
+as follows:
+
+	Friction (
+	856N/m/s		0		1mph		2.61N/m/s		1.8
+	5.1N/rad/s		1		-1rad/s		0		1
+	)
+
+The first set of five numbers in red are what is used to represent velocity dependent friction while 
+the second five numbers represent friction on curves.  It is the first set of numbers that we are 
+interested in.  These numbers represent the constants C1, E1, V2, C2, E2, respectively.  In this 
+case, C1=856N/m/s, E1=0, V2= 1mph, C2=2.61N/m/s, E2 = 1.8.  These numbers are used by 
+MSTS to calculate friction as follows according to the MSTS documentation:
+
+F=C1*VE1          if V2<0
+F=C1*VE1          if V=V2
+F=C1*V2E1 + C2*V2 + C2*(V-V2)E2   if V>V2
+
+In these three equations AB means A to the power of B.  F is the friction in newtons (4.448222 
+newtons = 1 pound), and V is the velocity in meters/sec (1 meter/sec = 2.23693 mph).  Note that 
+I said according to the MSTS documentation.  As it turns out, the documentation is incorrect.  I did 
+not discover this while working on FCalc 1.0 because V2 was small (1 mph), and therefore the 
+discrepancy wasn't enough to be measurable under the methods I was using at the time.  The 
+corrected equations are as follows:
+
+F=C1*VE1          if V2<0
+F=C1*VE1          if V=V2
+F=C1*V2E1 + C2*V2 + C2*VE2   if V>V2
+
+Note that they are identical except for the case of V > V2.  In that case the last term is C2*VE2, not 
+C2*(V-V2)E2.  If V2 is small, as it always was in FCalc 1.0, the discrepancy is small.  In the case of 
+FCalc 2.0, when V2 values as large as 6 mph are used, the error was quite significant.  Once I 
+noticed it, I adjusted all my spreadsheets to calculate MSTS friction using the correct method.
+
+	The biggest difference between FCalc 1.0 and FCalc 2.0 is the fact that there is no fixed 
+value of E2 whereas FCalc 1.0 used E2=1.8 for most rolling stock and E2=1.86 for high-speed 
+rolling stock.  The purpose of this new method is to get the best fit possible between the Davis 
+equation and the MSTS friction equation.  Because MSTS uses only two terms while Davis uses 
+three a perfect match is not possible, but the discrepancies over the speed range of interest are 
+much smaller in FCalc 2.0.
+
+	Before proceeding any further it is necessary to digress and discuss the theory and 
+history of estimating train resistance.  The first person to comprehensively and scientifically 
+measure the running resistance of trains was W.L. Davis in 1926.  By measuring how long it took 
+trains of various configurations to coast down over tracks of known gradients he was able to 
+develop an empirical equation which would enable one to estimate the resistance of any train.  
+Any complex function can be broken down into a infinite series of polynomials of the form 
+A+Bx+Cx2+Cx3+Cx4+ ….   In practice a finite number of terms are used depending upon the 
+degree of accuracy required.  For railroading purposes a second order polynomial equation turned 
+out to be a good enough fit to the empirical data.  Therefore, the generalized form of the Davis 
+equation is R=A+B+CV2 where R is resistance, V is velocity, and A,B, and C are coefficients which 
+depend upon the type of rolling stock and units used for R and V.  Furthermore, for most railway 
+stock the A coefficient usually takes the form of A=A1*T + A2*N, where T is the mass and N is the 
+number of axles.  The B coefficient is usually proportional to the mass (i.e. B=B1*T), and the C 
+coefficient is generally a product of the frontal area A and drag coefficient CD (i.e. C=CD*A).
+
+The accuracy of the original Davis equations was independently verified over the years.  
+Modern rolling stock with larger dimensions, higher weights, and roller bearings, as well as 
+changes in track structure, made it necessary to modify the Davis equations to better fit observed 
+empirical results.  It should be noted that in all cases the Davis equations are only valid for 
+speeds over 5 mph.  Under that speed, the rolling resistance of  bearings starts to increase.  In 
+the case of solid (also termed friction) bearings the increase is dramatic.  In the case of roller 
+bearings it is smaller but nevertheless present.  It is difficult to model this increase because it 
+depends upon temperature, type of bearing seal, length of bearing service, etc.  As trains rarely 
+spend any time in revenue service at speeds under 5 mph, no attempt has been made to do so 
+other than to give rough values of starting resistance in terms of pounds per ton of train weight.
+
+	The best place to start looking at the methodology used in FCalc 2.0 is by examining how 
+I simulated solid bearing trucks.  Let's take a 50-ton (45.359 metric ton) freight car as an 
+example.  This is about as typical as it gets for the time periods during which solid bearing trucks 
+were in use.  The Davis equation for solid bearing freight cars is R = 1.3T + 29N + 0.045TV + 
+0.0005AV2 = 181 + 2.25V + 0.045V2 with the appropriate values substituted, and assuming a 
+frontal area of 90 ft2.  Note that for this Davis equation, and any others I will use in the remainder 
+of this document, R is in pounds, V is in mph, A is in ft2, and T is in short (US) tons.  Also note 
+that this equation is only valid at a speed of 5 mph or greater.  Under that speed resistance starts 
+increasing, and starting friction of rolling stock equipped with solid bearing trucks is generally 
+around 20 to 25 lbs per ton of weight, and as much as 50 lbs/ton in cold conditions.
+
+	How can we simulate this in MSTS, especially the higher starting friction?  Note that by 
+looking at how MSTS calculates friction, we see that when V = V2 only the term F=C1*VE1 is used.  
+It is immediately obvious to anyone familiar with exponents that a negative value of E1 will 
+indeed give a value of friction that increases as speed decreases.  There is one problem with this, 
+however.  When speed reaches zero, friction will theoretically become infinite.  As luck would have 
+it, this problem does not occur in MSTS because the train speed never reaches exactly zero.  This 
+isn't to say that negative exponents will not cause problems sometimes, but only if their 
+magnitude is too high.  I've found that E1 values higher than about –0.30 will start to cause 
+problems such as cars jiggling or even jumping off the tracks.  A great deal of experimentation 
+measuring the starting resistance of a cut of cars resulted in my choosing  –0.25 as the best 
+compromise value.  There are no side effects and the starting resistance for a 50-ton freight car 
+will be around 1300 lbs, which is 26 lbs/ton.  This is well within the range observed for solid-
+bearing trucks.  Furthermore, I used a V2 value in the range of 5 to 6 mph to simulate the point 
+at which resistance would start increasing.  It was in the course of experimenting using this 
+higher V2 value that I discovered the MSTS documentation to be in error as described on the last 
+page, and I then corrected my equations.
+
+	This took care of the part under 5 mph.  However, I was also interested in the greatest 
+possible accuracy at speeds over 5 mph.  I soon came to realize that no single value of E2 would 
+give good results for rolling stock of different weights, so I had to decide between compromising 
+the accuracy or devising a method to choose the value of E2 that resulting in the best fit in each 
+individual case.  I chose the latter course.  The method I would use involved minimizing the RMS 
+error at speeds above V2 up to some maximum speed.  It was at this juncture that I realized there 
+was no point in worrying about speeds higher than would ever be seen in normal service.  FCalc 
+1.0 had used E2=1.8 as the value giving the best fit over the speed range of 0 to 150 mph.  I had 
+chosen 150 mph as it was the highest speed conventional trains were ever likely to see.  I decided 
+in FCalc 2.0 to use more realistic speed ranges, especially for freight.  I picked 80 mph as the 
+maximum freight speed.  Therefore, I would pick the value of E2 that would give the smallest 
+RMS error over the speed range of V2 to 80 mph.  This method is commonly used for curve fitting, 
+and is called least-squares regression.  RMS error is calculated simply by  squaring the difference 
+between each pair of data points, summing these squared differences, dividing by the number of 
+data points, and then taking the square root.  If you consider the order of these operations in 
+reverse (root, mean, and square), then it easy to see how the term RMS came to be.
+
+	Now that I had a rough methodology, I had to find the best way to do my calculations.  I 
+initially had to choose a value of C1.  In FCalc 1.0 this was chosen simply be setting C1 equal to 
+the Davis A coefficient in newtons.   I continued to use this method for roller bearing trucks in 
+FCalc 2.0 but found that it wouldn't give the best possible fit for solid bearing trucks.  After some 
+experimentation, I found that the best overall value of C1 was to set the constant portion of the 
+MSTS friction value equal to the Davis resistance at the speed of 0.6V2.  To elaborate further, 
+consider that when V>V2, F=C1*V2E1 + C2*V2 + C2*VE2.  Because C1, V2, and E1 are all 
+constants, the first term is also a constant.  Therefore, the final equation I used was:
+
+C1=(A + 0.6BV2 + C[0.6V2]2)/V2E1
+
+Note that A, B, and C are the Davis coefficients.  Because everything in FCalc 2.0 is done 
+internally in metric, I used metric equivalents for all the Davis equations.  By first setting C1, it 
+was possible to calculate C2 if I assumed that the Davis and MSTS resistances were equal at 
+some speed VEQ.  The speed VEQ is called the FCalc=Davis speed, and the equation used to 
+calculate C2 was as follows:
+
+C2=(A + BVEQ + CVEQ2 - C1*V2E1)/(V2 - VEQE2)
+
+Once C1 and C2 were known, it was then possible to calculate the RMS error.
+
+	There was one remaining problem that needed to be overcome.  I varied E2 from 1.0 to 
+2.0 in order to find the value giving the least RMS error.  For each value of E2 I varied VEQ from 
+30 mph up to 80 mph in 1 mph increments, and for each set of E2 and VEQ I varied V2 from 5 to 
+6 mph in 0.1 mph increments.  The problem I faced should be obvious by now-if I wanted to get 
+the best E2 value (to within 0.001) I needed to calculate RMS error, which in and of itself 
+consisted of hundreds of calculations, 1001*51*11, or 561,000 times!  I had initially wanted to 
+vary V2 in 0.01 increments but found that little was gained.  That would have resulted in the 
+need to calculate RMS error over 5 million times.  Prior to streamlining my methods, I did indeed 
+use all possible values just to make sure any shortcuts I took wouldn't compromise the final 
+accuracy.  Needless to say, each calculation took several minutes on my 1.568 GHz machine, and 
+it was necessary to speed things up.  I found that I could simply keep V2 and VEQ at midpoint 
+values, and vary E2 only in order to quickly get very close to the final values.  I then used this 
+close value of E2, varied V2 and VEQ over their entire ranges to find the set of values giving the 
+smallest RMS error, incremented E2 by 0.001, varied V2 and VEQ again, and so forth.  I noted 
+that once the optimum value was found, continuing to increment E2 and do all the calculations 
+was pointless, so I stopped calculating as soon as the RMS error started getting larger.  All of 
+these enhancements gave the same results, but with only a few seconds of calculation time.
+
+	How does this new method work?  The answer is very well indeed.
+
+
+Methodology Behind The FCalc 2.0 Resistance Equations
+
+	As already noted, one of the main reasons for updating FCalc was not only to make it 
+more accurate, but also to include many more choices in regards to rolling stock.  To this end, I 
+drew on several sources.  Dave Nelson furnished me with equations for solid bearing rolling stock.  
+I drew upon Bob Boudoin's extensive physics work for more accurate equations for certain types 
+of freight cars.  I also used some data on high-speed trains from Clem Tillier and several other 
+sources.  In some cases I took a good educated estimate of what the equations were, and saw how 
+well they agreed with empirical data where available.
+
+	I'll start with a discussion of the three (actually four) bearing types used in FCalc 2.0.  
+The most notable addition is solid bearings, also know as friction bearings.  The term friction 
+bearing was coined by Timken for marketing purposes in the 1930s in order to help them sell 
+their new roller bearings, which they termed antifriction.  This was really a misnomer as all 
+bearings are antifriction.  In any case the term fell into common usage, although I defer in this 
+document to the original term solid bearing.  Solid bearings are exactly that-the steel axle turns 
+in a brass bearing lubricated by oil fed from oil soaked rags.  Surprisingly, the rolling resistance 
+of solid bearings was not much worse than roller bearings except at very low speeds, which 
+explains why they were in use well into the 1950s.  They were, however, prone to overheating and 
+catching fire if not properly lubricated, especially at high speeds.  It is a testament to the people 
+who ran the railroads that they were able to run freight trains with solid bearings at speeds as 
+high as 70 mph with few incidents.  Of course, in time a few spectacular derailments traced to 
+overheated solid bearings combined with increasing labor costs led to the requirement of roller 
+bearings on all rolling stock used for interchange between railroads.  The few remaining cars with 
+solid bearings are used strictly for MOW duty.
+
+	The most important characteristic of solid bearings, at least as far as MSTS is concerned, 
+is their rather high starting resistance.  This is simulated by using a value of –0.25 for E1.  The 
+resistance at speeds above 5 mph is based on the set of Davis equations furnished to me by Dave 
+Nelson.  Translated into the format used for my other equations, these are as follows:
+
+Locomotive		R=1.3T + 29N + 0.03TV + 0.0024CAV²
+Steam Locomotive	R=1.3T + 29N + 0.03TV + 0.0024CAV² + 20DF
+Passenger Car		R=1.3T + 29N + 0.03TV + 0.00034AV²
+Freight Car		R=1.3T + 29N + 0.045TV + 0.0005AV²
+Motor Car		R=1.3T + 29N + 0.09TV + 0.0024CAV²
+
+Note the use of area in the last term even for freight and passenger cars (both of which did not 
+use area with the set of Davis equations used in FCalc 1.0).  Also note the additional mechanical 
+resistance of 20 lbs per ton for steam locomotives multiplied by the weight on drivers D and the 
+additional factor F.  This factor F is 1.0 for steam locomotives with regular connecting rods, 0.8 
+for ones equipped with lightweight roller-bearing connecting rods, and 0.5 for those equipped 
+with poppet valves and Franklin Rotary Cam valve gear.
+
+I further broke down motor cars into three categories-leading, middle, and end:
+
+Leading Motor Car	R=1.3T + 29N + 0.09TV + 0.0024CAV²
+Middle Motor Car	R=1.3T + 29N + 0.09TV + 0.00034AV²
+End Motor Car		R=1.3T + 29N + 0.09TV + 0.0006AV²
+
+Only the last term is different between categories.  I used the original equation for leading motor 
+cars because the third term assumes the same form and values as a leading locomotive.  The 
+middle motor car basically has the same aerodynamic resistance as a passenger car, so the third 
+term equals that of a passenger car.  The end motor car has somewhat more drag than a middle 
+one, but not anywhere near that of the leading motor car, so I estimated the value for the third 
+term based on studies I've read regarding the relative contributions of leading and trailing 
+locomotives to drag for high-speed trains.  In FCalc 2.0 I used the term railcar instead of motor 
+car as it seems to be a more common way of referring to EMUs and DMUs.
+
+	I also added an empty hopper to the list of freight cars.  The relevant equation for a solid 
+bearing empty hopper is:
+
+Empty Hopper	R=1.3T + 29N + 0.045TV + 0.0015CAV²
+
+The first and second terms are obviously the same as for a standard freight car.  The last term 
+was estimated based on Bob Boudoin's use of 6 to 9 N/m/s for the C2 value of empty hoppers in 
+MSTS.  I was able to get a range of possible values for the third Davis coefficient, and simply took 
+the average.  I used the exact same third term for roller bearing hoppers.  Note that the 
+aerodynamic drag is about three times that of a normal freight car due to the way an empty 
+hopper catches the wind.
+
+	There are three types of roller bearings used in FCalc 2.0.  They are standard roller 
+bearings, optimized seal roller bearings, and labyrinth seal roller bearings.  All roller bearings 
+require seals to keep the grease from leaking out.  The seals on standard roller bearings 
+contribute as much as 50% of the total bearing drag.  In the quest to save fuel, railroads are 
+sometimes replacing standard roller bearings with types which have lower drag.  The two main 
+alternatives are optimized seal roller bearings and labyrinth seal roller bearings.  Optimized seal 
+bearings use lower drag seals while labyrinth bearings use a non-contact close tolerance series of 
+barriers in a labyrinth pattern to contain the grease.  Both are more expensive to produce than 
+standard roller bearings.  Bearing resistance is a function of time in service and temperature in 
+addition to design.  The following chart shows bearing start-up resistance versus temperature:
+
+As can be seen the bearing seals and grease contribute an enormous amount towards the total 
+drag, especially at lower temperatures when grease starts to solidify.  In some cases the hardened 
+grease can increase the drag by a factor of ten.  Special greases need to be used when trains are 
+mainly operated in very cold climates.  I thought about including environmental factors in FCalc 
+2.0 to simulate this variation in resistance with temperature, but in the end I decided that it 
+would be too complex.  There is simply too much variability even among bearings of the same 
+type to make any adjustments based on temperature meaningful.  Additionally, I would need to 
+incorporate adjustments in the aerodynamic portions of the Davis equations to simulate changes 
+in air drag versus temperature.  Air density increases as air temperature goes down, so this tends 
+to increase aerodynamic drag with decreasing temperature.  However, most heat engines develop 
+more power at lower temperatures, and even electric locomotives may do so (due to decreased 
+motor winding resistance).  Thus, the temperature effects balance out to some extent, and it 
+would be highly complex to try to include them anyway.
+
+Standard roller bearings undergo a dramatic reduction in resistance as they are run in, mostly 
+due to the seal seating itself, but also due to the bearing surfaces polishing themselves.  The 
+other two types of roller bearings show a smaller reduction, mostly due to bearing contact surface 
+polishing action.  Optimized seal and labyrinth bearings show little decrease in drag past about 
+100,000 miles, which is the point I used to determine the relative resistance of standard versus 
+specialized seal roller bearings.  Because the resistance of optimized seal and labyrinth bearings 
+is virtually identical at 100,000 miles, I lumped them together in FCalc 2.0 under the term low-
+torque roller bearings and used one set of equations.
+
+	Translating the above data into a new set of Davis equations was fairly straightforward.  
+The difference in torque between standard and low-torque roller bearings at 100,000 miles is 
+about 5 ft-lbs, or 10 ft-lbs per axle.  For a standard 33-inch freight wheel (radius = 1.375 feet), 
+this is a reduction of ~7 lbs per axle.  For larger passenger car and freight wheels of 36 inches the 
+reduction is 6.5 lbs.  42-inch locomotive wheels have a net reduction in drag of 6 lbs per axle.  
+The portion of the Davis A coefficient proportional to weight remains unchanged.  There were also 
+adjustments in the Davis B coefficient to account for the reduction in velocity dependent 
+rotational forces.  I used roughly the ratio of per axle drag for standard versus low-torque roller 
+bearings to determine the new B coefficient.  For example, the per axle drag ratio for standard 
+freight cars is 11/18.125 or 0.61.  I multiplied the Davis freight B coefficient of 0.015 by this 
+value to arrive at 0.0915.  I rounded this up to 0.01 as it seemed a little low and I wanted a more 
+even number.  In all cases I erred on the side of adjusting too high rather than too low as I felt the 
+main contribution of low-torque bearings was to reduce the constant A term of the Davis equation 
+more than the velocity dependent B term.  For low-torque roller bearings I used E1=-0.05 rather 
+than E=-0.10 to simulate a lower starting resistance.  Measured starting resistances in MSTS for 
+standard roller bearing equipped cars ranged from 11.4 lbs/ton for very light (20 metric ton) cars 
+to 5 lbs/ton for fully loaded cars (120 metric tons).  Corresponding values for low-torque roller 
+bearing equipped cars ranged from 5.3 lbs/ton to 2.9 lbs/ton depending upon weight.
+
+	In addition to the new bearing types I also added several new equations for modern 
+freight cars based on Bob Boudoin's work.  I've already mentioned the empty hopper, which is the 
+only new car type used with both solid and roller bearings.  The other new types are modern cars 
+which never existed in the era of solid bearings, and thus they are available with only the two 
+options for roller bearings.  The types are autorack, COFC (container-on-flat-car or double stack), 
+and spine car.  As before, I used Bob's empirical values to arrive at approximate Davis equations.  
+The new equations for standard roller bearing equipped cars are as follows:
+
+Autorack		R=1.5T + 18.125N + 0.015TV + 0.0007AV²
+COFC			R=0.6T + 20N + 0.01TV + 0.175V²
+Spine Car		R=0.6T + 20N + 0.01TV + 0.185V²
+
+The last term for autoracks is 40% higher than for a standard box car of the same frontal area.  
+The other two equations are very approximate but are based on the fact that TOFCs have about 
+15% more drag than COFCs, while spine cars are somewhat closer to TOFCs but still have 
+smaller drag.  If anyone can furnish me with better equations or new equations, I will gladly do 
+minor updates of FCalc every few months to incorporate the new models.
+
+	I did a major revision of my equations for high-speed trains based on empirical studies of 
+high-speed train resistance. The new equations for high-speed trains are:
+
+Locomotive		R=0.8T + 20N + 0.01TV + 0.0015CAV²
+Passenger Car		R=1.0T + 20N + 0.01TV + 0.0000037LAV²
+
+It is important to note that the equation for the high-speed locomotive represents an average of 
+the leading and trailing locomotives used on nearly all high-speed trains.  I did this because most 
+MSTS high-speed train models only use one model to represent both  locomotives, thus requiring 
+an average equation.  The last term in the passenger car equation is based on length as well as 
+frontal area.  The study I read indicated that aerodynamic drag increases linearly with train 
+length.  I had also used a length-based last term in FCalc 1.0 for high-speed passenger cars but it 
+was estimated.  The source I read enabled me to replace my estimate with hard data, although 
+my original estimate was pretty close (within 15%) if I assumed a frontal area of 10 meters2, 
+which is fairly typical for many high-speed passenger cars.
+
+The high-speed train study enabled me to develop an equation for maglev trains.  It takes 
+the following form:
+
+Maglev	R=2.0T + 0.0036757LV + 0.0000037LAV² + 0.001143CAV²
+
+The study determined that the term proportional to velocity consists partly of rolling resistance 
+and partly of laminar air flow.  Because maglevs have no wheels, only the portion due to laminar 
+air flow is applicable, which is why the second term is proportional to length only and not to 
+weight.  The last two terms are aerodynamic drag proportional to velocity2.  The first portion is 
+exactly the same as for high-speed passenger cars.  The second portion is based on the drag 
+produced by just the front and rear surfaces.  This is why it is smaller than the corresponding 
+term for a high-speed locomotive.  The drag from the sides is not included because it is already 
+included in the first portion.  The single term proportional to weight only represents the magnetic 
+drag of the vehicle.  This is highly variable among maglev types, but 2 lbs/ton seems to be a 
+ballpark figure.  Because maglevs are a relatively new technology, I don't expect that a generic set 
+of equations for them exist.  My equation represents a highly educated estimate but it should give 
+fairly good results.  However, I'm not entirely sure if the Davis model is valid when speeds are an 
+appreciable fraction of the speed of sound, as they are for maglevs.
+
+The appendix has a complete listing of all the equations used in FCalc 2.0.  I used all 
+three bearing types for railcars, freight cars, and passenger cars.  Steam locomotives are available 
+with both solid and standard roller bearing options.  The mechanical term of 20 lbs/ton is not 
+used for roller bearing steam locomotives on the assumption that roller bearings are used for all 
+bearing surfaces, including connecting rods.  The equation for locomotives refers to diesel and 
+electric locomotives only.  I did not include an option for solid bearings because they were not 
+used on either diesel or electric locomotives to the best of my knowledge.  For early box cab 
+electric motors using reciprocating connecting rods the equation for solid bearing steam 
+locomotives might give better results.
+
+
+
+Guidelines For Using FCalc 2.0
+
+While FCalc 2.0 strives to faithfully duplicate the Davis equations it is based on, it can 
+only be accurate if supplied with accurate information.  Therefore, a series of guidelines are in 
+order.  The biggest change that will be noticed from FCalc 1.0 besides the addition of  many new 
+types of rolling stock will be the fact that frontal area is used for virtually everything except 
+TOFCs, COFCs, and spine cars.  This is to better estimate aerodynamic drag as a larger vehicle 
+will obviously have more drag whether it is in front of the train or in the middle.  The best way to 
+accurately measure frontal or cross-sectional area is from a scale drawing of the car in question, 
+or from a scale model if available.  The size of the bounding box can also be a guide, provided it 
+coincides exactly with the top, sides, and bottom of the vehicle.  The area of rectangular body 
+shapes is easily calculated if the height and width are known.  More complex shapes may require 
+laying out a front view on graph paper, counting the number of squares covered, and converting 
+the result to meter2.  Absolute accuracy is not required, but it is a good idea and fairly easy to be 
+within a few percent of the true value.  In the absence of data, the program will suggest defaults 
+of 10.2 meter2 for freight cars, 11.2 meter2 for passenger cars, and 16.35 meter2 for autoracks.  
+Do not use the suggested values unless you lack better data.  Chances are if you made the 3D 
+model  you already have what you need to estimate frontal area to a high degree of accuracy.  In 
+cases where a certain type of car is known to have a larger amount of aerodynamic drag than 
+most cars of similar size, a value of frontal area larger than the true value can be used.  You can 
+adjust the value up or down until you get the desired results.
+
+Probably the most important parameters are the weight and number of axles as they 
+influence rolling resistance.  Rolling resistance is responsible for a good portion of the total train 
+resistance, especially at speeds under 50 mph.  Because the mass not only influences the 
+calculated friction value but also how quickly the rolling stock accelerates,  decelerates, behaves 
+on gradients, and so forth, it is very important to obtain as accurate a value as possible.  Even 
+small differences can have a noticeable effect in train handling.  Fortunately, the weight, or more 
+accurately the mass, is usually available to a fairly high degree of accuracy.  The number of axles 
+is obviously known exactly.  For trains with shared or articulated trucks use one-half the number 
+of axles on each shared truck and all the axles on unshared trucks.  For instance, a TGV center 
+coach riding only on shared trucks will have two axles while an end coach with one shared and 
+one normal truck will have three.  The type of bearing will also have an effect on train handling, 
+and it is visually obvious which cars have solid bearings and which have roller bearings.  Less 
+obvious are those cars which use low-torque roller bearings.  If this information is not available it 
+is best to assume standard roller bearings.  Even within cars of a given type, some railroads may 
+elect to retrofit their cars with low-torque roller bearings while others will not.
+
+While the "big three" are very important, another parameter of some importance is the 
+drag coefficient.  You are generally only asked for the drag coefficient if the vehicle is in front of 
+the train.  Basically, this means locomotives and leading motor cars only.  For a good portion of 
+the rolling stock out there it is pretty safe to assume a value of 1.  If it looks boxy, you probably 
+can't go wrong picking 1 for the drag coefficient.  However, if you have a locomotive that will only 
+be used as one of the following units in a multiple unit lash-up then it is probably more realistic 
+to use a value of less than 1 for the drag coefficient.  A value around 0.7 might be appropriate in 
+that case.  For cases when the leading unit is streamlined, appropriate values would be 0.65 to 
+0.75 if partially streamlined, and 0.5 or less if fully streamlined.  I've found that a value of 0.35 
+for very streamlined trains like the TGV combined with proper frontal area will give results that 
+are in near perfect agreement with empirically measured values.  Because data regarding drag 
+coefficients is very hard to come by, the best method is to take a look at the locomotive, estimate 
+the degree of streamlining, and choose an appropriate value based on the guidelines I just gave 
+for various types of  locomotives.  Slight streamlining might mean a drag coefficient of 0.9, 
+something like an F7 might be around 0.6 to 0.7.  An HHP-8 might be about 0.55.  A TGV or 
+bullet train will probably be under 0.4, and in some cases under 0.3. All of these examples only 
+apply to units in front of the train.  Trailing units will have less drag, and the drag coefficient 
+should reflect this.  A value of from 30% to 70% of the leading unit's drag coefficient is 
+appropriate, depending upon how closely coupled the units are.  For instance, an F7 or PA B-unit 
+might use a drag coefficient of  0.25, while an unstreamlined freight locomotive might use 0.6 to 
+0.7.  In the end a good portion of the train resistance is made up of the cars being pulled, not the 
+locomotive(s), so errors of 20% or more in the drag coefficient won't have that large of an effect 
+except for a very short train.
+
+The final parameter used is length, and this is only in the case of high-speed passenger 
+cars and maglevs.  The length can be easily found by simply examining the last value in the size 
+parameter in the .eng or .wag file.  Provided the size parameter is set properly so that the coupler 
+faces are touching, this value will be accurate to within one or two tenths of a meter.  This is 
+adequate enough for the purposes of FCalc 2.0 and MSTS.
+
+FCalc 2.0 is capable of recalculating the friction value for a new speed range after a value 
+using the default speed range is computed.  The default speed range is 80 mph for freight cars 
+and locomotives, 150 mph for passenger cars and locomotives, 250 mph for high-speed trains, 
+and 350 mph for maglevs.  The only exceptions are 100 mph for solid bearing passenger cars and 
+125 mph for steam passenger locomotives.  There is generally not much to be gained accuracy-
+wise by using a speed range under 80 mph, but you can do so if you want to.  In the case of 
+certain types of rolling stock, a more appropriate speed range might be the design speed of the 
+rolling stock, or the top geared speed of the locomotive.  In general it is a good idea to add 5 mph 
+to these values just to cover slight excursions over the limits.  For example, an Amfleet coach and 
+AEM-7 locomotive are both rated for 125 mph.  130 mph will give slightly more accurate results 
+than the default 150 mph speed range.  For most freight locomotives and cars the default 80 mph 
+range will suffice.  Because average errors are higher with larger speed ranges it is an especially 
+good idea to recalculate in this manner for high-speed trains.  Reducing the range from 250 mph 
+down to, say,  210 mph will have a noticeable effect on error.  In the case of railcars, the speed 
+range must be entered all the time.  This is because there is such a wide range of EMU and DMU 
+design speeds that any default value would be unsatisfactory.  In nearly all cases I've noticed that 
+optimizing for a speed range of less than 60 mph is pointless.  The RMS error actually increases 
+slightly for smaller speed ranges.  I stopped short of setting 60 mph as the minimum top speed in 
+the FCalc 2.0 program but I don't recommend using anything smaller.  The only caveat with 
+optimizing for a speed range other than the default is that it might be a good idea to place a 
+comment near the friction value stating the speed range that was used so that others can 
+duplicate the results. In fact, I recommend also including in the comment the frontal area, and if 
+applicable the drag coefficient and/or length.  The purpose of this is so that others can easily see 
+how the friction value was arrived at.
+
+Another interesting addition in FCalc 2.0 is the special custom Davis coefficient 
+optimization.  If you have somehow managed to obtain Davis coefficients for a particular piece of 
+rolling stock you can enter those coefficients, along with the speed range and bearing type, and 
+have an optimized MSTS friction value calculated for you.  The program accepts inputs in either 
+English or Metric format.  The English format uses mph for velocity and pounds for resistance.  
+The Metric format uses meters/sec for velocity and newtons for resistance.  These are the most 
+commonly seen units for Davis equations.  Some metric Davis equations use km/hr for speed 
+instead of meters/sec.  In that case you must first convert to the units used by FCalc 2.0.  This 
+can be done by multiplying the B coefficient by 3.6 and the C coefficient by 3.62, or 12.96.  The A 
+coefficient is unchanged.
+
+In order to ensure compatibility with future train simulators I outputted the Davis 
+equations along with the MSTS friction value.  If these new simulators use the same method to 
+calculate train friction as MSTS 1 then the usual five term friction value is available.  On the 
+other hand, should the programmers decide to use the Davis coefficients instead then those 
+coefficients will be available on the output screen as well.  In the interests of accuracy I 
+recommend that the programmers of any new train simulators do not use the Davis equations for 
+speeds under 5 mph.   I suggest instead having another set of equations (possibly an inverse 
+exponential) apply under 5 mph, combined with a variable for static friction (to prevent the 
+inverse exponential from becoming infinite at low speeds).
+
+Finally, it is important to remember that train resistance is but one part of realistic 
+physics.  Proper values for locomotive power, tractive effort, control settings, and so forth are very 
+important.  Brake parameter settings also have a great influence on how realistic the sim 
+ultimately will feel.  All of these things have been addressed by myself and others to some extent.  
+Discussing them here is beyond the scope of this document.  I can only say that many visually 
+attractive models have suffered due to poor physics.  In many cases the very unrealistic default 
+physics are used without further modification despite the ready availability of alternatives.
+
+
+
+Using the FCalc 2.0 Spreadsheets
+
+	In order to enhance the usefulness of FCalc 2.0 I have included a series of Excel 
+spreadsheets for each of the major types of rolling stock.  In most cases each sheet contains one 
+worksheet for each of the subtypes of that particular type of rolling stock.  For example, the 
+spreadsheet for standard freight cars, "FCalc 2.0 Standard Freight.xls", contains worksheets for 
+solid, roller, and low-torque roller bearing equipped cars.  These sheets are designed to allow the 
+user to see graphs of the MSTS friction value calculated by the FCalc 2.0 program, and to 
+compare those graphs to the Davis equations.  Unfortunately, Excel in and of itself is incapable of 
+doing the complex algorithm needed to determine the best fit MSTS friction value, and hence the 
+spreadsheets are only a supplement to, rather than a replacement for, the FCalc 2.0 program.
+
+	The best way to describe how to use these sheets is via a demonstration.  Take the "FCalc 
+2.0 Standard Freight.xls" spreadsheet, for instance. In order to use it properly you must first find 
+the worksheet for the type of bearing the car has.  All of the worksheets have typical values for 
+weight, frontal area, axles, and so forth already filled in along with the FCalc 2.0 results using 
+those values.  You simply replace the metric values for weight, number of axles, and frontal area 
+(cells B2,B3, and B4) with your own values.  You then calculate the MSTS friction value using the 
+FCalc 2.0 program and the same three values you just entered on the worksheet.  After the FCalc 
+2.0 program gives you an MSTS friction value you enter the V2, E2, and Davis=FCalc speed in the 
+appropriate cells on the worksheet.  C1 and C2 are calculated automatically for you.  If all goes 
+well you should now see a graph of how your new MSTS friction value compares to the Davis 
+equation over the entire speed range.  There are also graphs of the error and percentage error 
+over the same speed range. 
+
+
+
+Appendix
+
+Summary of English Resistance Equations Used in Fcalc 2.0
+
+Standard Roller Bearings
+
+Locomotive             R=1.3T + 29N + 0.03TV + 0.0024CAV²
+Steam Locomotive       R=1.3T + 29N + 0.03TV + 0.0024CAV² + 20DF
+Standard Freight Car   R=1.5T + 18.125N + 0.015TV + 0.0005AV²
+Autorack               R=1.5T + 18.125N + 0.015TV + 0.0007AV²
+Empty Hopper           R=1.5T + 18.125N + 0.015TV + 0.0015AV²
+TOFC                   R=0.6T + 20N + 0.01TV + 0.20V²
+Spine Car              R=0.6T + 20N + 0.01TV + 0.185V²
+COFC(Double Stack)     R=0.6T + 20N + 0.01TV + 0.175V²
+Passenger Car          R=1.3T + 29N + 0.03TV + 0.00034AV²
+Leading Motor Car      R=1.3T + 29N + 0.06TV + 0.0024CAV²
+Middle Motor Car       R=1.3T + 29N + 0.06TV + 0.00034AV²
+End Motor Car          R=1.3T + 29N + 0.06TV + 0.0006AV²
+
+Optimized Seal/Labyrinth Low-Torque Roller Bearings
+
+Locomotive             R=1.3T + 23N + 0.02TV + 0.0024CAV²
+Standard Freight Car   R=1.5T + 11N + 0.01TV + 0.0005AV²
+Autorack               R=1.5T + 11N + 0.01TV + 0.0007AV²
+Empty Hopper           R=1.5T + 11N + 0.01TV + 0.0015AV²
+TOFC                   R=0.6T + 13.5N + 0.007TV + 0.20V²
+Spine Car              R=0.6T + 13.5N + 0.007TV + 0.185V²
+COFC(Double Stack)     R=0.6T + 13.5N + 0.007TV + 0.175V²
+Passenger Car          R=1.3T + 22.5N + 0.019TV + 0.00034AV²
+Leading Motor Car      R=1.3T + 22.5N + 0.038TV + 0.0024CAV²
+Middle Motor Car       R=1.3T + 22.5N + 0.038TV + 0.00034AV²
+End Motor Car          R=1.3T + 22.5N + 0.038TV + 0.0006AV²
+
+Friction Bearings
+
+Steam Locomotive       R=1.3T + 29N + 0.03TV + 0.0024CAV² + 20DF
+Standard Freight Car   R=1.3T + 29N + 0.045TV + 0.0005AV²
+Empty Hopper           R=1.3T + 29N + 0.045TV + 0.0015AV²
+Passenger Car          R=1.3T + 29N + 0.03TV + 0.00034AV²
+Leading Motor Car      R=1.3T + 29N + 0.09TV + 0.0024CAV²
+Middle Motor Car       R=1.3T + 29N + 0.09TV + 0.00034AV²
+End Motor Car          R=1.3T + 29N + 0.09TV + 0.0006AV²
+
+High-Speed Train
+
+Locomotive(front/rear) R=0.8T + 20N + 0.01TV + 0.0015CAV²
+Passenger Car          R=1.0T + 20N + 0.01TV + 0.000003702LAV² 
+
+Maglev
+
+Maglev                 R=2.0T+3.6757e-3LV+(3.702e-6L+0.001143C)AV²
+
+
+
+Summary of Metric Resistance Equations Used in Fcalc 2.0
+
+Standard Roller Bearings
+
+Locomotive             R=6.3743T + 128.998N + 0.32905TV + 0.57501CAV²
+Steam Locomotive       R=6.3743T + 128.998N + 0.32905TV + 0.57501CAV² + 98.0667DF
+Standard Freight Car   R=7.3550T + 80.625N + 0.16453TV + 0.11979AV²
+Autorack               R=7.3550T + 80.625N + 0.16453TV + 0.16771AV²
+Empty Hopper           R=7.3550T + 80.625N + 0.16453TV + 0.35938AV²
+TOFC                   R=2.9420T + 88.964N + 0.10968TV + 4.45168V²
+Spine Car              R=2.9420T + 88.964N + 0.10968TV + 4.11780V²
+COFC(Double Stack)     R=2.9420T + 88.964N + 0.10968TV + 3.89522V²
+Passenger Car          R=6.3743T + 128.998N + 0.32905TV + 0.08146AV²
+Leading Motor Car      R=6.3743T + 128.998N + 0.65811TV + 0.57501CAV²
+Middle Motor Car       R=6.3743T + 128.998N + 0.65811TV + 0.08146AV²
+End Motor Car          R=6.3743T + 128.998N + 0.65811TV + 0.14375AV²
+
+Optimized Seal/Labyrinth Low-Torque Roller Bearings
+
+Locomotive             R=6.3743T + 102.309N + 0.21937TV + 0.57501CAV²
+Standard Freight Car   R=7.3550T + 48.9305N + 0.10968TV + 0.11979AV²
+Autorack               R=7.3550T + 48.9305N + 0.10968TV + 0.16771AV²
+Empty Hopper           R=7.3550T + 48.9305N + 0.10968TV + 0.35938AV²
+TOFC                   R=2.9420T + 60.051N + 0.07678TV + 4.45168V²
+Spine Car              R=2.9420T + 60.051N + 0.07678TV + 4.11780V²
+COFC(Double Stack)     R=2.9420T + 60.051N + 0.07678TV + 3.89522V²
+Passenger Car          R=6.3743T + 100.085N + 0.20840TV + 0.08146AV²
+Leading Motor Car      R=6.3743T + 100.085N + 0.41680TV + 0.57501CAV²
+Middle Motor Car       R=6.3743T + 100.085N + 0.41680TV + 0.08146AV²
+End Motor Car          R=6.3743T + 100.085N + 0.41680TV + 0.14375AV²
+
+Friction Bearings
+
+Steam Locomotive       R=6.3743T + 128.998N + 0.32905TV + 0.57501CAV² + 98.0667DF
+Standard Freight Car   R=6.3743T + 128.998N + 0.49358TV + 0.11979AV²
+Empty Hopper           R=6.3743T + 128.998N + 0.49358TV + 0.35938AV²
+Passenger Car          R=6.3743T + 128.998N + 0.32905TV + 0.08146AV²
+Leading Motor Car      R=6.3743T + 128.998N + 0.98716TV + 0.57501CAV²
+Middle Motor Car       R=6.3743T + 128.998N + 0.98716TV + 0.08146AV²
+End Motor Car          R=6.3743T + 128.998N + 0.98716TV + 0.14375AV²
+
+High-Speed Train
+
+Locomotive(front/rear) R=3.9227T + 88.964N + 0.10968TV + 0.35938CAV²
+Passenger Car          R=4.9033T + 88.964N + 0.10968TV + 0.00291LAV²
+
+Maglev
+
+Maglev                 R=9.8066T + 0.12LV + (0.00291L + 0.27388C)AV²
+
+
+
+Unit Conversions
+
+1 meter² = 10.76391 ft²
+1 ft² = 0.09290304 meter²
+1 meter/second = 3.6 km/hr = 2.23693 mph
+1 mph = 1.609344 km/hr = 0.44704 meter/second
+1 metric ton(tonne) = 1.102311 short ton = 2204.622 pounds
+1 short(US) ton = 0.907185 metric ton = 2000 pounds
+1 meter = 3.28084 feet
+1 foot = 0.3048 meter
+1 pound = 4.448222 newtons
+1 newton = 0.224809 pounds
+
+
+Sources
+
+1)	Introduction To Transportation Engineering and Planning by Edward K. 
+Morlok, copyright 1978 McGraw-Hill, Inc.
+
+2)	Baldwin Red Book, 1939
+
+3)	Energy Consumption and Running Time For Trains by Piotr Lucaszewicz, 
+2001 Department of Vehicle Engineering, Royal Institute of 
+Technology, Stockholm, Sweden 
+(http://www.lib.kth.se/Fulltext/lukaszewicz010608.pdf)
+
+4)	Bearing Rolling Resistance - Technical Forum 03-1  Brenco, Inc. (no 
+author or date given)  (http://www.brencoqbs.com/forums/0301.htm) 
+
+5)	Railsim Train Performance Calculator Demo  (http://www.RAILSIM.com)
+
+
+Credits 
+
+Kevin Arceneaux-beta testing
+Frank Bandre-beta testing
+Nick Chillianis-modified steam locomotive equations
+Bob Boudoin-empirical data for many types of freight equipment, 
+extensive physics modifications, extensive beta testing
+Sidney Broughton-another graphical version of FCalc (not yet released)
+Richard Gibb-beta testing
+Okrasa Ghia-graphical version of FCalc
+Todd Jones-locomotive engineer, empirical data for many types of 
+freight equipment
+Derek Morton-programmer of EngMod, volunteered to program future GUI 
+version of FCalc 2
+Dave Nelson-solid bearing equations, extensive help incorporating solid 
+bearings into Fcalc, help with spreadsheets
+Cyndi Richards-beta testing
+Ian Roberts-suggestions for dealing with steam locomotives and friction
+	bearings, spreadsheets incorporating FCalc
+Clem Tillier-data on high-speed trains
+James Titus-ideas to incorporate solid bearings into Fcalc, help with 
+spreadsheets
+Richard Wilms-anecdotal information about solid (friction) bearings
+
+Credits are in alphabetical order

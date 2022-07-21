@@ -1,0 +1,23 @@
+SIMISA@@@@@@@@@@JINX0r1t______
+
+Dyntrack (
+	FileName ( DYNTRACK )
+	Class ( "Track Sections" )
+	Align ( None )
+	Description ( "Dynamic track piece" )
+)
+Platform (
+	Class ( "Mainline Stations" )
+	Description ( Platform )
+	StoreMatrix ( )
+)
+Siding (
+	Class ( "Mainline Stations" )
+	Description ( Siding )
+	StoreMatrix ( )
+)
+CarSpawner (
+	Class ( "Vehicles" )
+	Description ( "Car Spawner" )
+	StoreMatrix ( )
+)

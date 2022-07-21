@@ -1,0 +1,53 @@
+                 Summary Of Inputs Used in Fcalc 2.0 Windows version
+ 
+                         Bearing Types              Vehicle Parameters
+                                                                              mass
+                                                                               on
+                           R   L   F      speed mass axles area  drag length drivers
+
+Locomotive                 X   X            X    X     X     X     X
+Steam Engine               X       X        X    X     X     X     X            X
+
+Railcar
+
+ Leading Railcar           X   X   X        X    X     X     X     X
+ Middle Railcar            X   X   X        X    X     X     X
+ End Railcar               X   X   X        X    X     X     X
+
+Passenger Car              X   X   X        X    X     X     X
+
+Freight Car
+
+ Standard Freight Car      X   X   X        X    X     X     X
+ Empty Hopper              X   X   X        X    X     X     X
+ Autorack                  X   X            X    X     X     X
+ TOFC                      X   X            X    X     X
+ Spine Car                 X   X            X    X     X
+ COFC(Double Stack)        X   X            X    X     X
+
+High-Speed Train
+
+ Locomotive             not applicable      X    X     X     X     X
+ Passenger Car          not applicable      X    X     X     X           X
+
+Maglev                  not applicable      X    X           X     X     X
+
+
+Notes:
+
+1) There are seven main vehicle categories, some with subtypes;
+   locomotive, steam engine, railcar, passenger car, freight car, high-speed train, and maglev.
+
+2) The types of bearings applicable to each car type are marked with an "X".
+   The types are roller(R), low-torque roller(L), and friction(F).
+   Bearing types are not applicable for high-speed trains or maglevs because only
+   one set of equations is used for each (maglevs obviously don't have bearings or axles).
+
+3) There are seven different data fields;
+   speed, mass, number of axles, area, drag coefficient, length and weight on drivers.
+   No type of rolling stock uses all values, the applicable ones are marked with an "X".
+
+4) The units used for input in data fields can be selected to be either US or Metric.
+
+5) There is also custom calculation fields where you can input Davis coefficients (in either
+   US or Metric) directly along with a speed range and get an appropriate MSTS friction value.

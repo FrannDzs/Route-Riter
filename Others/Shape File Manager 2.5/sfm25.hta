@@ -1,0 +1,1886 @@
+<html>
+<head>
+<title>Shape File Manager</title>
+<HTA:APPLICATION 
+     ID="oSFM"
+     APPLICATIONNAME="ShapeManager"
+     BORDER="thin"
+     BORDERSTYLE="normal"
+     CAPTION="yes"
+     ICON=""
+     MAXIMIZEBUTTON="yes"
+     MINIMIZEBUTTON="yes"
+     SHOWINTASKBAR="yes"
+     SINGLEINSTANCE="no"
+     VERSION="2.5"
+     WINDOWSTATE="maximize"/>
+
+<style>
+body	 	{font-family: Verdana; font-size: 10pt ; background-color : buttonface ; margin : 0 0}
+input	 	{font-family: Verdana; font-size: 10pt}
+td		 	{font-size: 10pt}
+.normal	{background-color : buttonface ; cursor:hand}
+.hilite	{background-color : buttonhighlight ; cursor:hand}
+.sbutton 	{ background-color : darkblue; color : white; cursor:hand ; border: 1 outset ; font-weight="bold" }
+.wnd	 	{ border: 3 outset ; display: none; position: absolute ; background-color: #ffffd8 ;
+			 padding: 4 ; filter:progid:DXImageTransform.Microsoft.Fade(duration=0.5,overlap=0.5)}
+.s80button 	{ background-color : #606060 ; color : white ; cursor:hand ; border: 1 outset ; width:80px ; text-align:center }
+.h80button 	{ background-color : white ; color : darkblue ; cursor:hand ; border: 1 outset ; width:80px ; text-align:center ; font-weight="bold" }
+.o90button 	{ background-color : white; color : darkblue; cursor:hand ; width:90px ; font-weight="bold" }
+.w90button 	{ width:90px }
+.o120button 	{ background-color : white; color : darkblue; cursor:hand ; width:120px ; font-weight="bold" }
+.w120button 	{ width:120px }
+
+</style>
+
+</head>
+
+<Script language=JavaScript>
+///////////////////////////////////////////
+//	MSTS Shape File Management
+//		by
+//	Paul Gausden, Jan 2002
+//   v2.5 Huecuvoe, August 2012
+//
+//	Version 2.2 May 2002
+//	- scales animation
+//	- option to scale eng/wag files
+//	- corrected left/right in text :)
+//	- added Distance levels
+//	2.2b fixed translucency bug
+// 2.2c fixed wag/eng brackets
+// 2.2d fix read only file problem
+// Version 2.3(a) Oct 2002 - sorted lists, object rotate, check for ffeditc_unicode.exe - bug fix for 2.2d and 2.3
+// Version 2.3x, Nov 2002 - Correction of object reverse and scaling with negative scale factors by Okrasa Ghia
+// Version 2.4, Jun 2003 - Attempt to fix Win 98/ME problems and shift matrix bug
+// Version 2.4a, July 2005 - some compressed files appeared as unknown
+// Version 2.5, August 2012: Rotate shape 90 degrees CW and CCW
+//                           Adjust MIP Map levels for textures
+//                           Configure alternate Unicode text editor.
+//                           Separate dialog box for settings.
+//                           Algorithm to recalculate normals when scaling shape files.
+//                           Numerous tweaks and fixes to the program and user interface.
+///////////////////////////////////////////
+
+// create a few objects...
+fso = new ActiveXObject("Scripting.FileSystemObject")
+wsh = new ActiveXObject("Wscript.Shell")
+sPath="HKCU\\Software\\Decapod\\SSize\\Settings\\"
+
+// check OS version
+NTos = navigator.appVersion.split("Windows ")[1]
+NTos=(NTos.charAt(0)!='9') && (NTos.substr(0,2)!="ME")
+
+// exit if OS is 9x or ME
+if (!NTos) {
+	alert("ERROR: Shape File Manager v2.5 requires Windows XP (or higher)")
+	window.close()
+}
+
+// try to locate FFEDITC_UNICODE
+sPathFFE=""
+
+try {
+	sPathFFE = wsh.RegRead(sPath + "ffeditPath")
+} catch(e) {}
+
+// read the registry for the location of MSTS - set default if not found
+if (!fso.FileExists(sPathFFE + "FFEDITC_UNICODE.EXE"))  {
+	try {
+		sPathFFE = wsh.RegRead("HKLM\\Software\\Microsoft\\Microsoft Games\\Train Simulator\\1.0\\Path") + "\\UTILS\\FFEDIT\\" 
+	} catch(e) {
+		sPathFFE = "C:\\Program Files\\Microsoft Games\\Train Simulator\\UTILS\\FFEDIT\\"
+	}
+}
+
+if (!fso.FileExists(sPathFFE + "FFEDITC_UNICODE.EXE")) {
+	sPathFFE=""
+	alert("WARNING: Unable to locate FFEDITC_UNICODE.EXE.\nSFM25 will not be able to compress or uncompress files.\n\n     Enter the path to FFEDITC_UNICODE.EXE in\n     the Shape File Manager \"Settings\" dialog box.")
+}
+
+sUniEditor="wordpad.exe"
+try {
+	sUniEditor = wsh.RegRead(sPath + "UniEditor")
+} catch(e) {}
+
+IE5=parseFloat(navigator.appVersion.substr(navigator.appVersion.indexOf("MSIE ")+5))
+
+sSwitch="onMouseEnter='this.className=\"hilite\";' onMouseLeave='this.className=\"normal\";' "
+currDir = "."
+
+// fill table with file and directory info
+ function fnInit() {
+ 
+	fnClearBlock ()
+
+	document.body.style.cursor='wait'
+ 	var sDir = ''
+ 	var fl, flts
+
+ 	// stop all registry errors
+	try {
+		chx2.checked=true
+		aCF=wsh.RegRead(sPath + "Confirm")
+		if ( aCF == 0 ) chx2.checked=false
+	} catch(e) {
+		wsh.RegWrite(sPath + "Confirm", chx2.checked,"REG_SZ")
+	}
+
+	try {
+		chx3.checked=true
+		flLimit=600
+		aLFL=wsh.RegRead(sPath + "LimitFileList")
+		if ( aLFL == 0 ) {
+			chx3.checked=false
+			flLimit=9999
+		}
+	} catch(e) {
+		wsh.RegWrite(sPath + "LimitFileList", chx3.checked,"REG_SZ")
+	}
+
+ 	try {
+		sDir = wsh.RegRead(sPath + "StartDir" )
+		if (sDir!='') currDir = sDir
+		} catch(e) {
+			wsh.RegWrite(sPath + "StartDir",currDir,"REG_SZ")
+		}
+
+	var f
+	try {
+	 	f=fso.GetFolder(currDir)
+	 } catch(e) {
+	 	f=fso.GetFolder('.')
+	 }
+	 
+ 	oCurrDir.innerText=f.Path
+ 	
+ 	// list sub-folders
+ 	var iLen=f.Path.length
+   	var fc = new Enumerator(f.SubFolders)
+  	var fList = new Array()
+	for (var i=0; !fc.atEnd(); fc.moveNext()) {
+		fList[i]=new Object()
+		fList[i].data=fc.item().Path.replace(/\\/g,"\\\\")
+		fList[i].name=fc.item().Path.substr(iLen).toUpperCase()
+		i++
+	}
+	fnSortName(fList)
+  	
+  	var s = ""
+	for (var i=0; i<fList.length; i++) {
+		s += "<span " + sSwitch + "Onclick='fnMove(\"" + fList[i].data.replace(/\'/g,"&#39;") + "\")'>"
+		s += fList[i].name
+		s += "</span><br>"
+	}
+	oSubs.innerHTML = s
+
+	// list files in the directory
+	fc = new Enumerator(f.files)
+	s = "<table border=\"1\" width=\"100%\" cellspacing=\"0\">"
+
+	i=0
+	fList= new Array()
+	for (; ((!fc.atEnd())&&(i<flLimit)); fc.moveNext()) {
+		var ss=fc.item().Name.toUpperCase()
+		if (ss.substring(ss.length-2,ss.length)=='.S') {
+			fList[i]=new Object()
+			fList[i].data = fc.item()
+			fList[i].name=ss
+			i++
+		}
+	}
+	fnSortName(fList)
+
+	for (var i=0; i<fList.length;i++) {
+		fl = fList[i].data
+      		s += "<tr " + sSwitch + ">"
+		s += "<td>" + fl.Name + "</td>"
+		s += "<td>" + fnFileTD(f,fl) + "</td>"
+		s += "</tr>"
+	}
+ 	s += "</table>"
+	oFiles.innerHTML = s
+
+	if ( fileCompressMenu.innerHTML == "") fnFileMenu()
+
+	document.body.style.cursor='default'
+
+}
+
+
+// write settings to registry
+function fnWriteREG() {
+
+	// Add trailing backslash if needed
+	if ( ffeLast=setFFE.value.charAt(setFFE.value.length - 1) != "\\" ) {
+		setFFE.value=setFFE.value + "\\"
+	}
+
+	if (!fso.FileExists(setFFE.value + "FFEDITC_UNICODE.EXE")) { 
+		alert("ERROR: Unable to verify the full path to FFEDITC_UNICODE.EXE.\n\nPATH: " + setFFE.value + "\n\nSettings NOT saved.")
+		return
+	}
+
+	if ((!fso.FileExists(setUNI.value)) && ( setUNI.value.toLowerCase() != "wordpad.exe" )) { 
+			if (!(confirm("Unable to verify " + setUNI.value + ".\n\(It may be on the PATH.\) Save settings anyway?"))) {
+				return
+			}
+	}
+
+	try {
+		aLFL=wsh.RegRead(sPath + "LimitFileList")
+	} catch(e) {}
+	
+	if ( !chx3.checked && aLFL != 0 ) {
+		if (!(confirm("WARNING: Disabling \"Limit File List\" may result in very slow execution and warning\nor error messages. Your computer may become unresponsive or crash completely.\n\n                                             ARE YOU SURE?"))) {
+			return
+		}
+	}
+
+	if ( setFFE.value != "sPathFFE" && setFFE.value != "" ) {
+		wsh.RegWrite(sPath + "ffeditPath", setFFE.value,"REG_SZ")
+		sPathFFE=setFFE.value
+		fnFileMenu()
+	}
+
+ 	if ( setUNI.value != "sUniEditor" && setUNI.value != "" ) {
+	 	wsh.RegWrite(sPath + "UniEditor", setUNI.value,"REG_SZ")
+		sUniEditor=setUNI.value
+	}
+
+ 	wsh.RegWrite(sPath + "Confirm", chx2.checked,"REG_SZ")
+ 	wsh.RegWrite(sPath + "LimitFileList", chx3.checked,"REG_SZ")
+
+ 	divSettings.style.display="none"
+
+	if ( ( ( chx3.checked ) && ( aLFL == 0 ) ) || ( ( !chx3.checked ) && ( aLFL != 0 ) ) ) {
+		fnInit()
+	}
+
+}
+
+
+// move to directory and update page
+function fnMove(sDir) {
+ 	if (sDir!='') {
+		wsh.RegWrite(sPath + "StartDir",sDir,"REG_SZ")
+ 		fnInit()
+ 		}
+}
+ 
+// get file size in Kb
+function fnSize(fl) {
+ 	if (fl.Size<1) return "0 Kb"
+ 	return ((fl.Size/1024) - (fl.Size/1024%1)) + " Kb"
+}
+
+// compress shape file
+function fnComp(sFile,obj) {
+
+	fnClearBlock ()
+
+	if (chx2.checked) {
+		if (!(confirm("SHAPEFILE: " + fso.GetFileName(sFile) + "\n\nACTION: Compress shape file"))) {
+			return
+		}
+	}
+
+	var xx
+
+	// protect against errors
+	try {
+		// clear read only bits
+		if (fso.FileExists(sPathFFE + "TEMPDP.S")) {
+			xx = fso.GetFile(sPathFFE + "TEMPDP.S")
+			xx.Attributes=0
+			fso.DeleteFile(sPathFFE + "TEMPDP.S",true)
+		}
+		fso.CopyFile(sFile, sPathFFE + "TEMPDP.S",true)
+		if (fso.FileExists(sPathFFE + "TEMPDPX.S")) {
+			xx = fso.GetFile(sPathFFE + "TEMPDPX.S")
+			xx.Attributes=0
+			fso.DeleteFile(sPathFFE + "TEMPDPX.S",true)
+		}
+	} catch(e) { alert("Warning - problems deleting or copying to TEMP*.S in the FFEDIT directory. The compress operation may not run\n" + e) }
+	
+	wsh.Run("cmd /c \"cd " + sPathFFE + " && FFEDITC_UNICODE.exe\" TEMPDP.S /c /o:TEMPDPX.S",0,true)
+
+	try {
+		fso.CopyFile(sPathFFE + "TEMPDPX.S",sFile,true)
+		xx = fso.GetFile(sFile)
+		obj.innerHTML = fnFileTD(fso.GetFolder(currDir),xx)
+	} catch(e) { alert("Compress failed to complete - File not updated\n" + e) }
+}
+
+// uncompress shape file
+function fnUnComp(sFile,obj) {
+
+	fnClearBlock ()
+
+	if (chx2.checked) {
+		if (!(confirm("SHAPEFILE: " + fso.GetFileName(sFile) + "\n\nACTION: Uncompress shape file"))) {
+			return
+		}
+	}
+
+	var xx
+
+	// protect against errors
+	try {
+		// clear read only bits
+		if (fso.FileExists(sPathFFE + "TEMPDP.S")) {
+			xx = fso.GetFile(sPathFFE + "TEMPDP.S")
+			xx.Attributes=0
+			fso.DeleteFile(sPathFFE + "TEMPDP.S",true)
+		}
+		fso.CopyFile(sFile, sPathFFE + "TEMPDP.S",true)
+		if (fso.FileExists(sPathFFE + "TEMPDPX.S")) {
+			xx = fso.GetFile(sPathFFE + "TEMPDPX.S")
+			xx.Attributes=0
+			fso.DeleteFile(sPathFFE + "TEMPDPX.S",true)
+		}
+	} catch(e) { alert("Warning - problems deleting or copying to TEMP*.S in the FFEDIT directory. The uncompress operation may not run\n" + e) }
+	
+	wsh.Run("cmd /c \"cd " + sPathFFE + " && FFEDITC_UNICODE.exe\" TEMPDP.S /u /o:TEMPDPX.S",0,true)
+
+	try {
+		fso.CopyFile(sPathFFE + "TEMPDPX.S",sFile,true)
+		xx = fso.GetFile(sFile)
+		obj.innerHTML = fnFileTD(fso.GetFolder(currDir),xx)
+	} catch(e) { alert("Uncompress failed to complete - File not updated\n" + e) }
+}
+
+// get file info and set options
+function fnFileTD(f,fl) {
+	var flts
+	var sRead=" "
+	var s = fnSize(fl)
+   	
+	flts = fl.OpenAsTextStream(1,-1)  // unicode open for read
+
+	if (fl.Size>24) sRead = flts.Read(24)
+
+	if (sRead == 'SIMISA@@@@@@@@@@JINX0s1t') {
+
+		s += " Uncompressed <span class='s80button' onMouseEnter='this.className=\"h80button\"' onMouseLeave='this.className=\"s80button\"' fData='" + f.Path.replace(/\'/,"\'") + "\\" + fl.Name + "' onClick='fnShowOpt(divCompress,this)'>Options</span>"
+	} else {
+		// trap here as IE5 may not have charCodeAt()
+		try {
+			if ((sRead.charCodeAt(0) == 18771) | (sRead.charCodeAt(0) == 21321)) {
+				s += " Compressed <span class='s80button' onMouseEnter='this.className=\"h80button\"' onMouseLeave='this.className=\"s80button\"' fData='" + f.Path.replace(/\'/,"\'") + "\\" + fl.Name + "' onClick='fnShowOpt(divUncompress,this)'>Options</span>"
+			} else {
+ 				s += " Unknown Format"
+			}
+		} catch(e) {
+			s += " Compressed <span class='s80button' onMouseEnter='this.className=\"h80button\"' onMouseLeave='this.className=\"s80button\"' fData='" + f.Path.replace(/\'/,"\'") + "\\" + fl.Name + "' onClick='fnShowOpt(divUncompress,this)'>Options</span>"
+		}
+	}
+	// close stream
+	flts.Close()
+	return(s)
+}
+
+// make shape file option menu - include compress/uncompress only if FFEDITC_UNICODE is found
+function fnFileMenu() {
+
+	s = "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"125\">"
+
+	if (fso.FileExists(sPathFFE + "FFEDITC_UNICODE.EXE")) {
+		s +=	"<tr><td onClick='fnUnComp(divUncompress.fData,divUncompress.fObj);divUncompress.style.display=\"none\"' onMouseEnter='this.className=\"sbutton\"' onMouseLeave='this.className=\"\"'>Uncompress</td></tr>"
+	}
+
+	s += "<tr><td onClick='fnEditsd(divUncompress.fData + \"D\");divUncompress.style.display=\"none\"' onMouseEnter='this.className=\"sbutton\"' onMouseLeave='this.className=\"\"'>Edit .SD File</td></tr></table>"
+
+	fileUncompressMenu.innerHTML = s
+
+	s = "<table border=\"0\" cellspacing=\"0\" cellpadding=\"0\" width=\"125\">"
+
+	if (fso.FileExists(sPathFFE + "FFEDITC_UNICODE.EXE")) {
+		s += "<tr><td onClick='fnComp(divCompress.fData,divCompress.fObj);divCompress.style.display=\"none\"' onMouseEnter='this.className=\"sbutton\"' onMouseLeave='this.className=\"\"'>Compress</td></tr>"
+	}
+
+	s += "<tr><td onClick='fnDL(divCompress.fData);divCompress.style.display=\"none\"' onMouseEnter='this.className=\"sbutton\"' onMouseLeave='this.className=\"\"'>Distance Levels</td></tr>"
+	s += "<tr><td onClick='fnMIP(divCompress.fData);divCompress.style.display=\"none\"' onMouseEnter='this.className=\"sbutton\"' onMouseLeave='this.className=\"\"'>MIP Map Levels</td></tr>"
+	s += "<tr><td onClick='fnReverse(divCompress.fData);divCompress.style.display=\"none\"' onMouseEnter='this.className=\"sbutton\"' onMouseLeave='this.className=\"\"'>Reverse</td></tr>"
+	s += "<tr><td onClick='fnRotateCCW(divCompress.fData);divCompress.style.display=\"none\"' onMouseEnter='this.className=\"sbutton\"' onMouseLeave='this.className=\"\"'>Rotate 90° CCW</td></tr>"
+	s += "<tr><td onClick='fnRotateCW(divCompress.fData);divCompress.style.display=\"none\"' onMouseEnter='this.className=\"sbutton\"' onMouseLeave='this.className=\"\"'>Rotate 90° CW</td></tr>"
+	s += "<tr><td onClick='fnScale(divCompress.fData);divCompress.style.display=\"none\"' onMouseEnter='this.className=\"sbutton\"' onMouseLeave='this.className=\"\"'>Scale</td></tr>"
+	s += "<tr><td onClick='fnShift(divCompress.fData);divCompress.style.display=\"none\"' onMouseEnter='this.className=\"sbutton\"' onMouseLeave='this.className=\"\"'>Shift</td></tr>"
+	s += "<tr><td onClick='fnTEX(divCompress.fData);divCompress.style.display=\"none\"' onMouseEnter='this.className=\"sbutton\"' onMouseLeave='this.className=\"\"'>Texture Modes</td></tr>"
+	s += "<tr><td onClick='fnEdit(divCompress.fData);divCompress.style.display=\"none\"' onMouseEnter='this.className=\"sbutton\"' onMouseLeave='this.className=\"\"'>Edit .S File</td></tr>"
+	s += "<tr><td onClick='fnEditsd(divCompress.fData + \"D\");divCompress.style.display=\"none\"' onMouseEnter='this.className=\"sbutton\"' onMouseLeave='this.className=\"\"'>Edit .SD File</td></tr></table>"
+	
+	fileCompressMenu.innerHTML = s
+
+}
+
+// show the Settings screen
+function fnSettings() {
+
+	fnClearBlock ()
+
+	setFFE.innerText=sPathFFE
+	setUNI.innerText=sUniEditor
+
+	divSettings.style.display="block"
+
+
+	try {
+		if (IE5>5) divShift.filters[0].Apply()
+	} catch(e) {}
+	fnScroll(divSettings)
+	try {
+		if (IE5>5) divShift.filters[0].Play()
+	} catch(e) {}
+}
+
+// CANCEL the Settings screen
+function fnCancelSettings() {
+
+	fnClearBlock ()
+
+	try {
+		chx2.checked=true
+		aCF=wsh.RegRead(sPath + "Confirm")
+		if ( aCF == 0 ) chx2.checked=false
+	} catch(e) {
+		wsh.RegWrite(sPath + "Confirm", chx2.checked,"REG_SZ")
+	}
+
+	try {
+		chx3.checked=true
+		aLFL=wsh.RegRead(sPath + "LimitFileList")
+		if ( aLFL == 0 ) {
+			chx3.checked=false
+		}
+	} catch(e) {
+		wsh.RegWrite(sPath + "LimitFileList", chx3.checked,"REG_SZ")
+	}
+}
+
+// reset settings to original default values
+function fnResetSettings() {
+
+	if (!(confirm("ACTION: Reset ALL settings to initial program defaults.\n\n                        ARE YOU SURE?"))) {
+		return
+	}
+
+	fnClearBlock ()
+
+	try {
+		wsh.RegDelete(sPath + "AlterENG")
+	} catch(e) {}
+
+	try {
+		wsh.RegDelete(sPath + "AlterSD")
+	} catch(e) {}
+
+	try {
+		wsh.RegDelete(sPath + "Confirm")
+	} catch(e) {}
+
+	try {
+		wsh.RegDelete(sPath + "ffeditPath")
+	} catch(e) {}
+
+	try {
+		wsh.RegDelete(sPath + "LimitFileList")
+	} catch(e) {}
+
+	try {
+		wsh.RegDelete(sPath + "ScaleFactor")
+	} catch(e) {}
+
+	try {
+		wsh.RegDelete(sPath + "ShiftX")
+	} catch(e) {}
+
+	try {
+		wsh.RegDelete(sPath + "ShiftY")
+	} catch(e) {}
+
+	try {
+		wsh.RegDelete(sPath + "ShiftZ")
+	} catch(e) {}
+
+	try {
+		wsh.RegDelete(sPath + "UniEditor")
+	} catch(e) {}
+
+	// try to locate FFEDITC_UNICODE
+	sPathFFE=""
+
+	// read the registry for the location of MSTS - set default if not found
+	if (!fso.FileExists(sPathFFE + "FFEDITC_UNICODE.EXE"))  {
+		try {
+			sPathFFE = wsh.RegRead("HKLM\\Software\\Microsoft\\Microsoft Games\\Train Simulator\\1.0\\Path") + "\\UTILS\\FFEDIT\\" 
+		} catch(e) {
+			sPathFFE = "C:\\Program Files\\Microsoft Games\\Train Simulator\\UTILS\\FFEDIT\\"
+		}
+	}
+
+	if (!fso.FileExists(sPathFFE + "FFEDITC_UNICODE.EXE")) {
+		sPathFFE=""
+	alert("WARNING: Unable to locate FFEDITC_UNICODE.EXE.\nSFM25 will not be able to compress or uncompress files.\n\n     Enter the path to FFEDITC_UNICODE.EXE in\n     the Shape File Manager \"Settings\" dialog box.")
+	}
+
+	sUniEditor="wordpad.exe"
+
+	if (fso.FileExists("FFEDITC_UNICODE.lnk")) fso.DeleteFile("FFEDITC_UNICODE.lnk",true)
+
+	fnInit()
+
+}
+
+// show the scale screen
+function fnScale(sFile) {
+
+	fnClearBlock ()
+
+	try {
+		if (IE5>5) divScale.filters[0].Apply()
+	} catch(e) {}
+	dsName.innerText=sFile
+	SdsName.innerText=fso.GetFileName(sFile)
+	dsName.style.visibility="hidden"
+	chx1.checked=true
+	divScale.style.display="block"
+	sx.value="1.0"
+
+	try {
+		sx.value=wsh.RegRead(sPath + "ScaleFactor")
+	} catch(e) {
+		wsh.RegWrite(sPath + "ScaleFactor", sx.value,"REG_SZ")
+	}
+
+	sy.value=sx.value
+	sz.value=sx.value
+	yz.style.visibility="hidden"
+	fnScroll(divScale)
+	try {
+		if (IE5>5) divScale.filters[0].Play()
+	} catch(e) {}
+}
+
+// show the shift screen
+function fnShift(sFile) {
+
+	fnClearBlock ()
+
+	try {
+		if (IE5>5) divShift.filters[0].Apply()
+	} catch(e) {}
+	dsNamex.innerText=sFile
+	SdsNamex.innerText=fso.GetFileName(sFile)
+	dsNamex.style.visibility="hidden"
+	divShift.style.display="block"
+	try {
+		sfx.value=wsh.RegRead(sPath + "ShiftX")
+		sfy.value=wsh.RegRead(sPath + "ShiftY")
+		sfz.value=wsh.RegRead(sPath + "ShiftZ")
+	} catch(e) {
+		sfx.value="0"
+		sfy.value="0"
+		sfz.value="0"
+	}
+	fnScroll(divShift)
+	try {
+		if (IE5>5) divShift.filters[0].Play()
+	} catch(e) {}
+}
+
+// show the texture mode screen
+function fnTEX(sFile) {
+
+	fnClearBlock ()
+
+	dsName2.innerText=sFile
+	SdsName2.innerText=fso.GetFileName(sFile)
+	dsName2.style.visibility="hidden"
+	fnScroll(divTEX)
+	fnShowTEX()
+	try {
+		if (IE5>5) divTEX.filters[0].Apply()
+	} catch(e) {}
+	divTEX.style.display="block"
+	fnScroll(divTEX)
+	try {
+		if (IE5>5) divTEX.filters[0].Play()
+	} catch(e) {}
+}
+
+// show the distance level screen
+function fnDL(sFile) {
+
+	fnClearBlock ()
+
+	dsName3.innerText=sFile
+	SdsName3.innerText=fso.GetFileName(sFile)
+	dsName3.style.visibility="hidden"
+	fnScroll(divDL)
+	fnShowDL()
+	try {
+	if (IE5>5) divDL.filters[0].Apply()
+	} catch(e) {}
+	divDL.style.display="block"
+	fnScroll(divDL)
+	try {
+		if (IE5>5) divDL.filters[0].Play()
+	} catch(e) {}
+}
+
+// show the MIP map level screen
+function fnMIP(sFile) {
+
+	fnClearBlock ()
+
+	dsName4.innerText=sFile
+	SdsName4.innerText=fso.GetFileName(sFile)
+	dsName4.style.visibility="hidden"
+	fnScroll(divMIP)
+	fnShowMIP()
+	try {
+		if (IE5>5) divMIP.filters[0].Apply()
+	} catch(e) {}
+	divMIP.style.display="block"
+	fnScroll(divMIP)
+	try {
+		if (IE5>5) divMIP.filters[0].Play()
+	} catch(e) {}
+}
+
+// reverse
+function fnReverse(sFile) {
+
+	fnClearBlock ()
+
+	var ftsi,ftso
+	var scx,scy,scz
+	var vtype
+
+	dsName.innerText=sFile
+
+	if (chx2.checked) {
+		if (!(confirm("SHAPEFILE: " + fso.GetFileName(sFile) + "\n\nACTION: Reverse (rotate 180 degrees)"))) {
+			return
+		}
+	}
+
+	sx.value=-1
+	sy.value=1
+	sz.value=-1
+
+	// VECTOR is used as a token in three different sections - vtype keeps track of the current section.
+	// vtype=1 corresponds to vol_sphere
+	// vtype=2 corresponds to normals
+	// vtype=3 corresponds to sort_vectors
+
+	scx=parseFloat(sx.value)
+	scy=parseFloat(sy.value)
+	scz=parseFloat(sz.value)
+
+	//try {
+		fso.CopyFile(dsName.innerText,dsName.innerText+".PreReverse",true)
+		// input file from backup
+		ftsi = fso.OpenTextFile(dsName.innerText+".PreReverse",1,false,-1)
+		// overwrite existing
+		ftso = fso.OpenTextFile(dsName.innerText,2,true,-1)
+
+		do {
+			o = fnReadLn(ftsi)
+
+			// points
+			if (o.command == 'POINT' && o.args.length>2) {
+				o.text=o.ctext + " ( " + fnRound(parseFloat(o.args[0]) * scx) + " " + fnRound(parseFloat(o.args[1]) * scy) + " "  + fnRound(parseFloat(o.args[2]) * scz) + " )"
+			}
+
+			// vectors
+			if (o.command == 'VECTOR' && o.args.length>2) {
+				if (vtype == 1 && o.args.length>3) {
+					o.text=o.ctext + " ( " + fnRound(parseFloat(o.args[0]) * scx) + " " + fnRound(parseFloat(o.args[1]) * scy) + " " + fnRound(parseFloat(o.args[2]) * scz) + " ) " + o.args[4]
+				}
+			
+				if (vtype == 2 && o.args.length>2) {
+					o.text=o.ctext + " ( " + fnRound(parseFloat(o.args[0]) * scx) + " " + fnRound(parseFloat(o.args[1]) * scy) + " "  + fnRound(parseFloat(o.args[2]) * scz) + " )"
+				}
+			
+				if (vtype == 3 && o.args.length>2) {
+					o.text=o.ctext + " ( " + fnRound(parseFloat(o.args[0]) * scx) + " " + fnRound(parseFloat(o.args[1]) * scy) + " "  + fnRound(parseFloat(o.args[2]) * scz) + " )"
+				}
+			}
+
+			// vol_sphere
+			if (o.command == 'VOL_SPHERE') {
+				vtype=1
+			}
+
+			// normals
+			if (o.command == 'NORMALS') {
+				vtype=2
+			}
+
+			// sort_vectors
+			if (o.command == 'SORT_VECTORS') {
+				vtype=3
+			}
+
+			// Linear Animation
+			if (o.command == 'LINEAR_KEY' && o.args.length>2) {
+				o.text=o.ctext + " ( " + o.args[0] + " " + fnRound(parseFloat(o.args[1]) * scx) + " " + fnRound(parseFloat(o.args[2]) * scy) + " "  + fnRound(parseFloat(o.args[3]) * scz) + " )"
+			}
+
+			// Rotational Animation
+			if (o.command == 'TCB_KEY' && o.args.length>9) {
+				o.text=o.ctext + " ( " + o.args[0] + " " + fnRound(parseFloat(o.args[1]) * scx) + " " + o.args[2] + " " + fnRound(parseFloat(o.args[3]) * scz) + " " + o.args[4] + " " + o.args[5] + " " + o.args[6] + " " + o.args[7] + " " + o.args[8] + " " + o.args[9] + " )"
+			}
+
+			// matrix
+			if (o.command == 'MATRIX' && o.args.length>11) {
+				o.text=o.ctext + " ( " + o.args[0] + " " + fnRound(parseFloat(o.args[1]) * scx )+ " " + o.args[2] + " " + fnRound(parseFloat(o.args[3]) * scx) + " " + o.args[4] + " " + fnRound(parseFloat(o.args[5]) * scz) + " " + o.args[6] + " " + fnRound(parseFloat(o.args[7]) * scz) + " " + o.args[8] + " " + fnRound(parseFloat(o.args[9]) * scx) + " " + fnRound(parseFloat(o.args[10]) * scy) + " "  + fnRound(parseFloat(o.args[11]) * scz) + " )"
+			}
+
+			ftso.WriteLine(o.text)
+
+		} while (!ftsi.atEndOfStream)
+
+		ftso.Close()
+		ftsi.Close()
+
+		// adjust sd file
+		try {
+			fso.CopyFile(dsName.innerText + "d",dsName.innerText+"d.PreReverse",true)
+			// input file from backup
+			ftsi = fso.OpenTextFile(dsName.innerText+"d.PreReverse",1,false,-1)
+			// overwrite existing
+			ftso = fso.OpenTextFile(dsName.innerText+ "d",2,true,-1)
+			do {
+				o = fnReadLn(ftsi)
+				if (o.command == 'ESD_BOUNDING_BOX' && o.args.length>5) {
+					o.args[0]=fnRound(parseFloat(o.args[0]) * scx)
+					o.args[1]=fnRound(parseFloat(o.args[1]) * scy)
+					o.args[2]=fnRound(parseFloat(o.args[2]) * scz)
+					o.args[3]=fnRound(parseFloat(o.args[3]) * scx)
+					o.args[4]=fnRound(parseFloat(o.args[4]) * scy)
+					o.args[5]=fnRound(parseFloat(o.args[5]) * scz)
+					o.text=o.ctext + " ( " + Math.min(o.args[0],o.args[3]) + " " + Math.min(o.args[1],o.args[4]) + " "  + Math.min(o.args[2],o.args[5]) + " " + Math.max(o.args[0],o.args[3]) + " " + Math.max(o.args[1],o.args[4]) + " "  + Math.max(o.args[2],o.args[5]) + " )"
+				}
+				if (o.command == 'ESD_COMPLEX_BOX' && o.args.length>11) {
+					o.args[0]=fnRound(parseFloat(o.args[0]) * scx)
+					o.args[1]=fnRound(parseFloat(o.args[1]) * scy)
+					o.args[2]=fnRound(parseFloat(o.args[2]) * scz)
+					o.args[3]=fnRound(parseFloat(o.args[3]) * scx)
+					o.args[4]=fnRound(parseFloat(o.args[4]) * scy)
+					o.args[5]=fnRound(parseFloat(o.args[5]) * scz)
+					o.args[6]=fnRound(parseFloat(o.args[6]) * scx)
+					o.args[7]=fnRound(parseFloat(o.args[7]) * scy)
+					o.args[8]=fnRound(parseFloat(o.args[8]) * scz)
+					o.args[9]=fnRound(parseFloat(o.args[9]) * scx)
+					o.args[10]=fnRound(parseFloat(o.args[10]) * scy)
+					o.args[11]=fnRound(parseFloat(o.args[11]) * scz)
+					o.text=o.ctext + " ( " + o.args[0] + " " + o.args[1] + " "  + o.args[2] + " " + o.args[3] + " " + o.args[4] + " "  + o.args[5] + " " + Math.min(o.args[6],o.args[9]) + " " + Math.min(o.args[7],o.args[10]) + " "  + Math.min(o.args[8],o.args[11]) + " " + Math.max(o.args[6],o.args[9]) + " " + Math.max(o.args[7],o.args[10]) + " "  + Math.max(o.args[8],o.args[11]) + " )"
+				}
+
+				ftso.WriteLine(o.text)
+
+			} while (!ftsi.atEndOfStream)
+
+			ftso.Close()
+			ftsi.Close()
+		} catch(e) {}
+
+	alert("Reverse Operation Complete - backup copy in .PreReverse file")
+
+}
+
+
+// Rotate 90 degrees CW
+function fnRotateCW(sFile) {
+
+	fnClearBlock ()
+
+	dsName.innerText=sFile
+
+	if (chx2.checked) {
+		if (!(confirm("SHAPEFILE: " + fso.GetFileName(sFile) + "\n\nACTION: Rotate 90 degrees Clockwise (CW)"))) {
+			return
+		}
+	}
+
+	sx.value=1
+	sy.value=1
+	sz.value=-1
+	fnRotateUpdate()
+	alert("Rotate CW Operation Complete - backup copy in .PreRotate file")
+}
+
+// Rotate 90 degrees CCW
+function fnRotateCCW(sFile) {
+
+	fnClearBlock ()
+
+	dsName.innerText=sFile
+
+	if (chx2.checked) {
+		if (!(confirm("SHAPEFILE: " + fso.GetFileName(sFile) + "\n\nACTION: Rotate 90 degrees Counterclockwise (CCW)"))) {
+			return
+		}
+	}
+
+	sx.value=-1
+	sy.value=1
+	sz.value=1
+	fnRotateUpdate()
+	alert("Rotate CW Operation Complete - backup copy in .PreRotate file")
+}
+
+// apply rotation
+function fnRotateUpdate() {
+	var ftsi,ftso
+	var scx,scy,scz
+	var vtype
+
+	// VECTOR is used as a token in three different sections - vtype keeps track of the current section.
+	// vtype=1 corresponds to vol_sphere
+	// vtype=2 corresponds to normals
+	// vtype=3 corresponds to sort_vectors
+
+	scx=parseFloat(sx.value)
+	scy=parseFloat(sy.value)
+	scz=parseFloat(sz.value)
+
+	//try {
+		fso.CopyFile(dsName.innerText,dsName.innerText+".PreRotate",true)
+		// input file from backup
+		ftsi = fso.OpenTextFile(dsName.innerText+".PreRotate",1,false,-1)
+		// overwrite existing
+		ftso = fso.OpenTextFile(dsName.innerText,2,true,-1)
+
+		do {
+			o = fnReadLn(ftsi)
+
+			// points
+			if (o.command == 'POINT' && o.args.length>2) {
+				o.text=o.ctext + " ( " + fnRound(parseFloat(o.args[2]) * scx) + " " + fnRound(parseFloat(o.args[1]) * scy) + " "  + fnRound(parseFloat(o.args[0]) * scz) + " )"
+			}
+
+			// vectors
+			if (o.command == 'VECTOR' && o.args.length>2) {
+				if (vtype == 1 && o.args.length>3) {
+					o.text=o.ctext + " ( " + fnRound(parseFloat(o.args[2]) * scx) + " " + fnRound(parseFloat(o.args[1]) * scy) + " " + fnRound(parseFloat(o.args[0]) * scz) + " ) " + o.args[4]
+				}
+			
+				if (vtype == 2 && o.args.length>2) {
+					o.text=o.ctext + " ( " + fnRound(parseFloat(o.args[2]) * scx) + " " + fnRound(parseFloat(o.args[1]) * scy) + " "  + fnRound(parseFloat(o.args[0]) * scz) + " )"
+				}
+			
+				if (vtype == 3 && o.args.length>2) {
+					o.text=o.ctext + " ( " + fnRound(parseFloat(o.args[2]) * scx) + " " + fnRound(parseFloat(o.args[1]) * scy) + " "  + fnRound(parseFloat(o.args[0]) * scz) + " )"
+				}
+			}
+
+			// vol_sphere
+			if (o.command == 'VOL_SPHERE') {
+				vtype=1
+			}
+
+			// normals
+			if (o.command == 'NORMALS') {
+				vtype=2
+			}
+
+			// sort_vectors
+			if (o.command == 'SORT_VECTORS') {
+				vtype=3
+			}
+
+			// Linear Animation
+			if (o.command == 'LINEAR_KEY' && o.args.length>2) {
+				o.text=o.ctext + " ( " + o.args[0] + " " + fnRound(parseFloat(o.args[3]) * scx) + " " + fnRound(parseFloat(o.args[2]) * scy) + " "  + fnRound(parseFloat(o.args[1]) * scz) + " )"
+			}
+
+			// Rotational Animation
+			if (o.command == 'TCB_KEY' && o.args.length>9) {
+				o.text=o.ctext + " ( " + o.args[0] + " " + fnRound(parseFloat(o.args[3]) * scx) + " " + o.args[2] + " " + fnRound(parseFloat(o.args[1]) * scz) + " " + o.args[4] + " " + o.args[5] + " " + o.args[6] + " " + o.args[7] + " " + o.args[8] + " " + o.args[9] + " )"
+			}
+
+			// matrix
+			if (o.command == 'MATRIX' && o.args.length>11) {
+				o.text=o.ctext + " ( " + o.args[8] + " " + fnRound(parseFloat(o.args[7]) * scx) + " " + fnRound(parseFloat(o.args[6]) * scx * scz ) + " " + fnRound(parseFloat(o.args[5]) * scx) + " " + o.args[4] + " " + fnRound(parseFloat(o.args[3]) * scz) + " " + fnRound(parseFloat(o.args[2]) * scx * scz ) + " " + fnRound(parseFloat(o.args[1]) * scz) + " " + o.args[0] + " " + fnRound(parseFloat(o.args[11]) * scx) + " " + fnRound(parseFloat(o.args[10]) * scy) + " "  + fnRound(parseFloat(o.args[9]) * scz) + " )"
+			}
+
+			ftso.WriteLine(o.text)
+
+		} while (!ftsi.atEndOfStream)
+
+		ftso.Close()
+		ftsi.Close()
+
+		// adjust sd file
+		try {
+			fso.CopyFile(dsName.innerText + "d",dsName.innerText+"d.PreRotate",true)
+			// input file from backup
+			ftsi = fso.OpenTextFile(dsName.innerText+"d.PreRotate",1,false,-1)
+			// overwrite existing
+			ftso = fso.OpenTextFile(dsName.innerText+ "d",2,true,-1)
+			do {
+				o = fnReadLn(ftsi)
+				if (o.command == 'ESD_BOUNDING_BOX' && o.args.length>5) {
+					o.args[0]=fnRound(parseFloat(o.args[0]) * scz)
+					o.args[1]=fnRound(parseFloat(o.args[1]) * scy)
+					o.args[2]=fnRound(parseFloat(o.args[2]) * scx)
+					o.args[3]=fnRound(parseFloat(o.args[3]) * scz)
+					o.args[4]=fnRound(parseFloat(o.args[4]) * scy)
+					o.args[5]=fnRound(parseFloat(o.args[5]) * scx)
+					o.text=o.ctext + " ( " + Math.min(o.args[2],o.args[5]) + " " + Math.min(o.args[1],o.args[4]) + " "  + Math.min(o.args[0],o.args[3]) + " " + Math.max(o.args[2],o.args[5]) + " " + Math.max(o.args[1],o.args[4]) + " "  + Math.max(o.args[0],o.args[3]) + " )"
+				}
+				if (o.command == 'ESD_COMPLEX_BOX' && o.args.length>11) {
+					o.args[0]=fnRound(parseFloat(o.args[0]) * scz)
+					o.args[1]=fnRound(parseFloat(o.args[1]) * scy)
+					o.args[2]=fnRound(parseFloat(o.args[2]) * scx)
+					o.args[3]=fnRound(parseFloat(o.args[3]) * scz)
+					o.args[4]=fnRound(parseFloat(o.args[4]) * scy)
+					o.args[5]=fnRound(parseFloat(o.args[5]) * scx)
+					o.args[6]=fnRound(parseFloat(o.args[6]) * scz)
+					o.args[7]=fnRound(parseFloat(o.args[7]) * scy)
+					o.args[8]=fnRound(parseFloat(o.args[8]) * scx)
+					o.args[9]=fnRound(parseFloat(o.args[9]) * scz)
+					o.args[10]=fnRound(parseFloat(o.args[10]) * scy)
+					o.args[11]=fnRound(parseFloat(o.args[11]) * scx)
+					o.text=o.ctext + " ( " + o.args[2] + " " + o.args[1] + " "  + o.args[0] + " " + o.args[5] + " " + o.args[4] + " "  + o.args[3] + " " + Math.min(o.args[8],o.args[11]) + " " + Math.min(o.args[7],o.args[10]) + " "  + Math.min(o.args[6],o.args[9]) + " " + Math.max(o.args[8],o.args[11]) + " " + Math.max(o.args[7],o.args[10]) + " "  + Math.max(o.args[6],o.args[9]) + " )"
+				}
+
+				ftso.WriteLine(o.text)
+
+			} while (!ftsi.atEndOfStream)
+
+			ftso.Close()
+			ftsi.Close()
+		} catch(e) {}
+
+}
+
+// OK on scale screen - apply the scale adjustment
+function fnScaleUpdate() {
+	var ftsi,ftso
+	var scx,scy,scz
+	var scmax,vtype,vx,vy,vz,vold,vnew
+
+	scx=parseFloat(sx.value)
+	scy=parseFloat(sy.value)
+	scz=parseFloat(sz.value)
+	if (chx1.checked) {
+		scy=scx
+		scz=scx
+	}
+	scmax=Math.max(scx,scy,scz)
+	vtype=0
+	vold=1.0
+	vnew=1.0
+	
+	// VECTOR is used as a token in three different sections - vtype keeps track of the current section.
+	// vtype=1 corresponds to vol_sphere
+	// vtype=2 corresponds to normals
+	// vtype=3 corresponds to sort_vectors
+	// vx, vy ,vx, vold and vnew are temporary variables used in calculating scaled normals
+
+	// Check for positive nonzero scale factors
+
+	if ( isNaN(scx) || isNaN(scy) || isNaN(scz) || scx<=0 || scy<=0 || scz<=0 ) {
+		alert("INPUT:  Scale X: " + sx.value + "   Scale Y: " +sy.value + "   Scale Z: " +sz.value + "\n\nERROR: Scale factors must be positive nonzero numbers.")
+		return
+	}
+
+	//try {
+		fso.CopyFile(dsName.innerText,dsName.innerText+".PreScale",true)
+		// input file from backup
+		ftsi = fso.OpenTextFile(dsName.innerText+".PreScale",1,false,-1)
+		// overwrite existing
+		ftso = fso.OpenTextFile(dsName.innerText,2,true,-1)
+
+		do {
+			o = fnReadLn(ftsi)
+			// points section
+			if (o.command == 'POINT' && o.args.length>2) {
+				o.text=o.ctext + " ( " + fnRound(parseFloat(o.args[0]) * scx) + " " + fnRound(parseFloat(o.args[1]) * scy) + " "  + fnRound(parseFloat(o.args[2]) * scz) + " )"
+			}
+
+			// vectors
+			if (o.command == 'VECTOR') {
+				if (vtype == 1 && o.args.length>3) {
+					o.text=o.ctext + " ( " + fnRound(parseFloat(o.args[0]) * scx) + " " + fnRound(parseFloat(o.args[1]) * scy) + " "  + fnRound(parseFloat(o.args[2]) * scz) + " ) " + fnRound(parseFloat(o.args[4]) * scmax)
+				}
+
+				if (vtype == 2 && !chx1.checked && o.args.length>2) {
+					vx=parseFloat(o.args[0])
+					vy=parseFloat(o.args[1])
+					vz=parseFloat(o.args[2])
+					vold=Math.sqrt( vx*vx + vy*vy + vz*vz )
+					if ( vold != 0 ) {
+						vx=vx/scx
+						vy=vy/scy
+						vz=vz/scz
+						vnew=Math.sqrt( vx*vx + vy*vy + vz*vz )
+						o.text=o.ctext + " ( " + fnRound(vx*vold/vnew) + " " + fnRound(vy*vold/vnew) + " "  + fnRound(vz*vold/vnew) + " )"
+					}
+				}
+
+				if (vtype == 3 && o.args.length>2) {
+					o.text=o.ctext + " ( " + fnRound(parseFloat(o.args[0]) * scx) + " " + fnRound(parseFloat(o.args[1]) * scy) + " "  + fnRound(parseFloat(o.args[2]) * scz) + " )"
+				}
+			}
+
+			// vol_sphere
+			if (o.command == 'VOL_SPHERE') {
+				vtype=1
+			}
+
+			// normals
+			if (o.command == 'NORMALS') {
+				vtype=2
+			}
+
+			// sort_vectors
+			if (o.command == 'SORT_VECTORS') {
+				vtype=3
+			}
+
+			// linear animation
+			if (o.command == 'LINEAR_KEY' && o.args.length>2) {
+				o.text=o.ctext + " ( " + o.args[0] + " " + fnRound(parseFloat(o.args[1]) * scx) + " " + fnRound(parseFloat(o.args[2]) * scy) + " "  + fnRound(parseFloat(o.args[3]) * scz) + " )"
+			}
+
+			// Rotational Animation - ROTATE and REVERSE ONLY
+
+			// matrix
+			if (o.command == 'MATRIX' && o.args.length>11) {
+				o.text=o.ctext + " ( " + o.args[0] + " " + o.args[1] + " " + o.args[2] + " " + o.args[3] + " " + o.args[4] + " " + o.args[5] + " " + o.args[6] + " " + o.args[7] + " " + o.args[8] + " " + fnRound(parseFloat(o.args[9]) * scx) + " " + fnRound(parseFloat(o.args[10]) * scy) + " "  + fnRound(parseFloat(o.args[11]) * scz) + " )"
+			}
+
+			ftso.WriteLine(o.text)
+
+		} while (!ftsi.atEndOfStream)
+
+		ftso.Close()
+		ftsi.Close()
+
+		// adjust sd file ???
+		try {
+			fso.CopyFile(dsName.innerText + "d",dsName.innerText+"d.PreScale",true)
+			// input file from backup
+			ftsi = fso.OpenTextFile(dsName.innerText+"d.PreScale",1,false,-1)
+			// overwrite existing
+			ftso = fso.OpenTextFile(dsName.innerText+ "d",2,true,-1)
+			do {
+				o = fnReadLn(ftsi)
+				if (o.command == 'ESD_BOUNDING_BOX' && o.args.length>5) {
+					o.args[0]=fnRound(parseFloat(o.args[0]) * scx)
+					o.args[1]=fnRound(parseFloat(o.args[1]) * scy)
+					o.args[2]=fnRound(parseFloat(o.args[2]) * scz)
+					o.args[3]=fnRound(parseFloat(o.args[3]) * scx)
+					o.args[4]=fnRound(parseFloat(o.args[4]) * scy)
+					o.args[5]=fnRound(parseFloat(o.args[5]) * scz)
+					o.text=o.ctext + " ( " + Math.min(o.args[0],o.args[3]) + " " + Math.min(o.args[1],o.args[4]) + " "  + Math.min(o.args[2],o.args[5]) + " " + Math.max(o.args[0],o.args[3]) + " " + Math.max(o.args[1],o.args[4]) + " "  + Math.max(o.args[2],o.args[5]) + " )"
+				}
+				if (o.command == 'ESD_COMPLEX_BOX' && o.args.length>11) {
+					o.args[3]=fnRound(parseFloat(o.args[3]) * scx)
+					o.args[4]=fnRound(parseFloat(o.args[4]) * scy)
+					o.args[5]=fnRound(parseFloat(o.args[5]) * scz)
+					o.args[6]=fnRound(parseFloat(o.args[6]) * scx)
+					o.args[7]=fnRound(parseFloat(o.args[7]) * scy)
+					o.args[8]=fnRound(parseFloat(o.args[8]) * scz)
+					o.args[9]=fnRound(parseFloat(o.args[9]) * scx)
+					o.args[10]=fnRound(parseFloat(o.args[10]) * scy)
+					o.args[11]=fnRound(parseFloat(o.args[11]) * scz)
+					o.text=o.ctext + " ( " + o.args[0] + " " + o.args[1] + " "  + o.args[2] + " " + o.args[3] + " " + o.args[4] + " "  + o.args[5] + " " + Math.min(o.args[6],o.args[9]) + " " + Math.min(o.args[7],o.args[10]) + " "  + Math.min(o.args[8],o.args[11]) + " " + Math.max(o.args[6],o.args[9]) + " " + Math.max(o.args[7],o.args[10]) + " "  + Math.max(o.args[8],o.args[11]) + " )"
+				}
+				ftso.WriteLine(o.text)
+
+			} while (!ftsi.atEndOfStream)
+
+			ftso.Close()
+			ftsi.Close()
+		} catch(e) {}
+
+		if ( scx>0 && scy>0 && scz>0 ) {
+			wsh.RegWrite(sPath + "ScaleFactor", sx.value,"REG_SZ")
+		}
+
+	divScale.style.display="none"
+	alert("Scale Operation Complete - backup copy in .PreScale file")
+
+}
+
+function fnRound(x) {
+	return Math.round(x*1000000)/1000000;
+}
+
+// try and keep it visible
+function fnScroll(o) {
+	if (o.style.display!="none") o.style.top=document.body.scrollTop+40;
+}
+
+// read and parse input line - assumes that there is only one command per line
+function fnReadLn(ftsi) {
+
+	var sLn="";
+	var sCmd="";
+	var sHead=""
+	var sName="";
+	var st="";
+	var z1,z2;
+	var o = new Object();
+	
+	sLn=ftsi.ReadLine();
+	
+	// save original line as o.text
+	o.text=sLn;
+	o.command="";
+	o.name="";
+	o.ctext="";
+
+	// reformat line - save leading spaces as sHead - replace non-leading whitespace with a single space - remove trailing spaces
+	z1=sLn.search(/\S/);
+	if (z1>0) {
+		sHead=sLn.substr(0,z1)
+		sLn=sLn.substr(z1).replace(/\s+/g," ").replace(/\s+$/g,"");
+	} else {
+		sLn=sLn.replace(/\s+/g," ").replace(/\s+$/g,"");
+	}
+	
+	// find index of first "(" in line
+	z1=sLn.indexOf("(");
+
+	if (z1>-1) {
+
+		// "(" found in sLn string
+		// sCmd: command tokens up to but not including first "(" - remove trailing spaces
+		sCmd=sLn.substr(0,z1).replace(/\s+$/g,"");
+
+		// o.ctext: command tokens with sHead without spaces at end
+		o.ctext=sHead + sCmd
+
+		// are there two command tokens? - second token is usually a name
+		// separate tokens if there is a space
+		z2=sCmd.indexOf(" ");
+		if (z2!=-1 && sCmd!="") {
+			sName=sCmd.substr(z2);
+			sCmd=sCmd.substr(0,z2);
+		}
+
+		// o.command: UpperCase token - no spaces
+		o.command=sCmd.replace(/^\s+/g,"").toUpperCase().replace(/ /g,"");
+
+		// o.name: second token if it exists
+		o.name=sName;
+
+		// st: single space delimited parameter list without leading spaces
+		st=sLn.substr(z1+1).replace(/^\s+/g,"");
+
+		// special handling for bounding boxes - find closing ")" and join multiple lines
+		if ( o.command=='ESD_BOUNDING_BOX' || o.command=='ESD_COMPLEX_BOX' ) {
+
+			while ( st.indexOf(")")<0 ) {
+				sLn=ftsi.ReadLine();
+		
+				// reformat line - replace whitespace with a single space - remove leading and trailing spaces
+				sLn=sLn.replace(/\s+/g," ").replace(/^\s+/g,"").replace(/\s+$/g,"");
+				if ( sLn!="" ) st=st + " " + sLn;
+			}
+		}
+
+		// fill o.args array with st parameters split at spaces
+		// last element will usually be a ")"
+		o.args=st.split(" ");
+
+	}
+
+	return(o);
+
+}
+
+//options for compressed file
+function fnShowOpt(div,o) {
+	var dx=0;
+	var dy=0;
+	var o1=o;
+
+	fnClearBlock()
+
+	try {
+	if (IE5>5) div.filters[0].Apply();
+	} catch(e) {}
+	while (o1!=null) {
+			dx += o1.offsetLeft;
+			dy += o1.offsetTop;
+			o1 = o1.offsetParent;
+	}
+	with (div.style) {
+			left=dx + "px";
+			top=dy + "px";
+			display='block';
+	}
+	div.fData=o.fData;
+	div.fObj=o.parentElement;
+	try {
+	if (IE5>5) div.filters[0].Play();
+	} catch(e) {}
+}
+
+// edit shape file with configured unicode editor
+function fnEdit(sFile) {
+	fnClearBlock ()
+	wsh.Run( sUniEditor + " \"" +sFile+ "\"" )
+}
+
+// edit shape data file with configured unicode editor
+function fnEditsd(sFile) {
+	if (!fso.FileExists(sFile)) {
+		var f=fso.OpenTextFile(sFile,2,true,-1);
+		f.WriteLine('SIMISA@@@@@@@@@@JINX0t1t______');
+		f.WriteLine('');
+		f.WriteLine('shape ( ' + sFile.substring(currDir.length+1,sFile.length-1));
+		f.WriteLine(' ESD_Detail_Level ( 1 )');
+		f.WriteLine(' ESD_Alternative_Texture ( 0 )');
+		f.WriteLine(' ESD_No_Visual_Obstruction ()');
+		f.WriteLine(' ESD_Bounding_Box ()');
+		f.WriteLine(')');
+		f.Close()
+	}
+	fnEdit(sFile);
+}
+
+// simply closes any open parameter menus 
+ function fnClearBlock() {
+	if (divSettings.style.display=="block") divSettings.style.display="none"
+	if (divDL.style.display=="block") divDL.style.display="none"
+	if (divMIP.style.display=="block") divMIP.style.display="none"
+	if (divScale.style.display=="block") divScale.style.display="none"
+	if (divShift.style.display=="block") divShift.style.display="none"
+	if (divTEX.style.display=="block") divTEX.style.display="none"
+}
+
+// open the help/instructions window
+function fnInstruction() {
+	fnClearBlock ()
+	var w=window.open("","Help","scrollbars=1;toolbar=0;menubar=0;status=0")
+	w.setTimeout("document.body.innerHTML=parent.opener.divHelp.innerHTML",1000);
+}
+
+// build the texture modes form
+function fnShowTEX() {
+	document.getElementsByTagName('body')[0].style.cursor='wait'
+	ftsi = fso.OpenTextFile(dsName2.innerText,1,false,-1);
+	ar = new Array();
+	i=0;
+
+   s = '<table border="1" width="100%" cellspacing="0" cellpadding="0">';
+   s +='<tr>';
+   s +='<td align="center" width="50"><b>Index</b></td>';
+   s +='<td align="center" width="180"><b>Matrix</b></td>';
+   s +='<td align="center" width="60">Normal</td>';
+   s +='<td align="center" width="60">DarkShd</td>';
+   s +='<td align="center" width="60">HalfBrt</td>';
+   s +='<td align="center" width="60">LoShine</td>';
+   s +='<td align="center" width="60">HiShine</td>';
+   s +='<td align="center" width="60">CrcForm</td>';
+   s +='<td align="center" width="60">Bright</td>';
+   s +='</tr>';
+
+	do {
+		o = fnReadLn(ftsi);
+		if (o.command=="MATRIX") {
+			ar[i]=o;
+			i++;
+		}
+		if (o.command=="VTX_STATES") {
+			i=0;
+		}
+		if (o.command=="VTX_STATE") {
+   			s +='<tr>';
+			s += '<td align="center">' + i + '</td>';
+			s += '<td align="center">' + ar[parseInt(o.args[1])].name + '</td>';
+   			s +='<td align="center"><input type="radio" value="-5" name="tx' + i + (o.args[2]=='-5' ? '" checked' : '"') + '></td>';
+   			s +='<td align="center"><input type="radio" value="-12" name="tx' + i + (o.args[2]=='-12' ? '" checked' : '"') + '></td>';
+   			s +='<td align="center"><input type="radio" value="-11" name="tx' + i + (o.args[2]=='-11' ? '" checked' : '"') + '></td>';
+   			s +='<td align="center"><input type="radio" value="-7" name="tx' + i + (o.args[2]=='-7' ? '" checked' : '"') + '></td>';
+   			s +='<td align="center"><input type="radio" value="-6" name="tx' + i + (o.args[2]=='-6' ? '" checked' : '"') + '></td>';
+   			s +='<td align="center"><input type="radio" value="-9" name="tx' + i + (o.args[2]=='-9' ? '" checked' : '"') + '></td>';
+   			s +='<td align="center"><input type="radio" value="-8" name="tx' + i + (o.args[2]=='-8' ? '" checked' : '"') + '></td>';
+   			s +='</tr>';
+			i++;
+   		}
+   		if (o.command=="LOD_CONTROLS") break;
+	} while (!ftsi.atEndOfStream)
+   s +='</table>';
+	dsTexTab.innerHTML = s;
+	ftsi.Close();
+	document.getElementsByTagName('body')[0].style.cursor='auto'
+}
+
+
+// build the distance level form
+function fnShowDL() {
+	document.getElementsByTagName('body')[0].style.cursor='wait';
+	ftsi = fso.OpenTextFile(dsName3.innerText,1,false,-1);
+	ar = new Array(10);
+	arp = new Array(10);
+
+	i=0;
+
+	s = '<table border="1" width="100%" cellspacing="0" cellpadding="0">';
+	s +='<tr>';
+	s +='<td align="center" width="50"><b>Level</b></td>';
+	s +='<td align="center" width="200"><b>Total Polygons</b></td>';
+	s +='<td align="center" width="200"><b>Distance (meters)</b></td>';
+	s +='</tr>';
+
+	do {
+		o = fnReadLn(ftsi);
+		if (o.command=="DLEVEL_SELECTION") {
+			ar[i]=o.args[0];
+			arp[i]=0;
+			i++;
+   		}
+		if (o.command=="GEOMETRY_INFO") {
+			arp[i-1]+=parseInt(o.args[0]);
+   		}
+		// exit at animations
+		if (o.command=='ANIMATIONS') break;
+
+	} while (!ftsi.atEndOfStream)
+
+	for (var j=0;j<i;j++) {
+		s +='<tr>';
+		s += '<td align="center">' + (j+1) + '</td>';
+		s += '<td align="center">' + arp[j] + ' polygons </td>';
+   		s +='<td align="center"><input type="text" value="' + ar[j] + '" id="dltx' + j + '"></td>';
+   		s +='</tr>';
+	}
+
+	s +='</table>';
+	dsDLTab.innerHTML = s;
+	ftsi.Close();
+	document.getElementsByTagName('body')[0].style.cursor='auto';
+}
+
+
+// build the MIP map level form
+function fnShowMIP() {
+	document.getElementsByTagName('body')[0].style.cursor='wait'
+	ftsi = fso.OpenTextFile(dsName4.innerText,1,false,-1);
+	ar = new Array();
+	i=0;
+
+	s = '<table border="1" width="100%" cellspacing="0" cellpadding="0">';
+	s +='<tr>';
+	s +='<td align="center" width="50"><b>Index</b></td>';
+	s +='<td align="center" width="300"><b>Texture</b></td>';
+	s +='<td align="center" width="50">MIP 0</td>';
+	s +='<td align="center" width="50">MIP-1</td>';
+	s +='<td align="center" width="50">MIP-2</td>';
+	s +='<td align="center" width="50">MIP-3</td>';
+	s +='</tr>';
+
+	do {
+		o = fnReadLn(ftsi);
+		if (o.command=="IMAGE") {
+			ar[i]=o.args[0];
+			i++;
+		}
+		if (o.command=="TEXTURES") {
+			i=0;
+		}
+		if (o.command=="TEXTURE") {
+   			s +='<tr>';
+			s +='<td align="center">' + i + '</td>';
+			s +='<td align="center">' + ar[parseInt(o.args[0])] + '</td>';
+   			s +='<td align="center"><input type="radio" value="0" name="mip' + i + (o.args[2]=='0' ? '" checked' : '"') + '></td>';
+   			s +='<td align="center"><input type="radio" value="-1" name="mip' + i + (o.args[2]=='-1' ? '" checked' : '"') + '></td>';
+   			s +='<td align="center"><input type="radio" value="-2" name="mip' + i + (o.args[2]=='-2' ? '" checked' : '"') + '></td>';
+   			s +='<td align="center"><input type="radio" value="-3" name="mip' + i + (o.args[2]=='-3' ? '" checked' : '"') + '></td>';
+   			s +='</tr>';
+			i++;
+   		}
+   		if (o.command=="LOD_CONTROLS") break;
+	} while (!ftsi.atEndOfStream)
+   s +='</table>';
+	dsMIPTab.innerHTML = s;
+	ftsi.Close();
+	document.getElementsByTagName('body')[0].style.cursor='auto'
+}
+
+
+// update the distance levels
+function fnDLUpdate() {
+
+	var ftsi,ftso,el,n;
+	var i=0;
+		try {
+			fso.CopyFile(dsName3.innerText,dsName3.innerText + ".PreDistance",true);
+			// input file from backup
+			ftsi = fso.OpenTextFile(dsName3.innerText + ".PreDistance",1,false,-1);
+			// overwrite existing
+			ftso = fso.OpenTextFile(dsName3.innerText,2,true,-1);
+
+			do {
+				o = fnReadLn(ftsi);
+				if (o.command=="DLEVEL_SELECTION") {
+					o.text=o.ctext + " ( " + eval("dltx" + i + ".value") + " )";
+					i++;
+				}
+				// finish rest off all at once
+				if (o.command=='ANIMATION') {
+					ftso.WriteLine(o.text);
+					o.text=ftsi.ReadAll();
+				}
+
+				ftso.WriteLine(o.text);
+
+			} while (!ftsi.atEndOfStream);
+
+			ftso.Close();
+			ftsi.Close();
+			alert("Distance Levels updated - backup copy in .PreDistance file");
+		} catch(e) {
+			alert('File Error: ' + e);
+		}
+
+	divDL.style.display="none";
+}
+
+// update the texture modes and the apply the specular fix to the sub object headers
+function fnTEXUpdate() {
+
+	var ftsi,ftso,el,n;
+	var i=0;
+		try {
+			fso.CopyFile(dsName2.innerText,dsName2.innerText + ".PreTexture",true);
+			// input file from backup
+			ftsi = fso.OpenTextFile(dsName2.innerText + ".PreTexture",1,false,-1);
+			// overwrite existing
+			ftso = fso.OpenTextFile(dsName2.innerText,2,true,-1);
+
+			do {
+				o = fnReadLn(ftsi);
+				if (o.command=="VTX_STATE") {
+					el=document.getElementsByName("tx" + i);
+					n=-5;
+					for (var c=0; c<el.length ; c++) {
+						if (el[c].checked) {
+							n=el[c].value;
+							break;
+						}
+					}
+					o.text=o.ctext + " ( " + o.args[0] + " " + o.args[1] + " " + n + " " + o.args[3] + " " + o.args[4] + " )";
+					i++;
+				}
+				// put in specular fix
+				if (o.command=="SUB_OBJECT_HEADER") {
+					if (o.args[0]!='00000100') {
+							o.text=o.ctext + " ( " + (o.args[0]=='00000500'?'00000100 ':'00000000 ') + o.args[1] + " " + o.args[2] + " " + o.args[3] + " " + o.args[4];
+					}
+				}
+
+				ftso.WriteLine(o.text);
+
+			} while (!ftsi.atEndOfStream);
+
+			ftso.Close();
+			ftsi.Close();
+			alert("Texture mode updated - backup copy in .PreTexture file");
+		} catch(e) {
+			alert('File Error: ' + e);
+		}
+
+	divTEX.style.display="none";
+}
+
+// update the MIP map levels
+function fnMIPUpdate() {
+
+	var ftsi,ftso,el,n;
+	var i=0;
+
+		try {
+			fso.CopyFile(dsName4.innerText,dsName4.innerText + ".PreMIPlevel",true);
+			// input file from backup
+			ftsi = fso.OpenTextFile(dsName4.innerText + ".PreMIPlevel",1,false,-1);
+			// overwrite existing
+			ftso = fso.OpenTextFile(dsName4.innerText,2,true,-1);
+
+			do {
+				o = fnReadLn(ftsi);
+				if (o.command=="TEXTURE") {
+					el=document.getElementsByName("mip" + i);
+					n=0;
+					for (var c=0; c<el.length ; c++) {
+						if (el[c].checked) {
+							n=el[c].value;
+							break;
+						}
+					}
+					o.text=o.ctext + " ( " + o.args[0] + " " + o.args[1] + " " + n + " " + o.args[3] + " )";
+					i++;
+				}
+
+				ftso.WriteLine(o.text);
+
+			} while (!ftsi.atEndOfStream);
+
+			ftso.Close();
+			ftsi.Close();
+			alert("MIP levels updated - backup copy in .PreMIPlevel file");
+		} catch(e) {
+			alert('File Error: ' + e);
+		}
+
+	divMIP.style.display="none";
+}
+
+
+// apply shift
+function fnShiftUpdate() {
+	var ftsi,ftso;
+	var scx,scy,scz;
+
+	scx=parseFloat(sfx.value);
+	scy=parseFloat(sfy.value);
+	scz=parseFloat(sfz.value);
+	
+	if (isNaN(scx) || isNaN(scy) || isNaN(scz)) {
+		// invalid number
+		alert("INPUT:  " + sfx.value + "   " +sfy.value + "   " +sfz.value + "\n\nERROR: Shift factors must be numbers.")
+		return
+	} else {
+
+		fso.CopyFile(dsNamex.innerText,dsNamex.innerText+".PreShift",true);
+		// input file from backup
+		ftsi = fso.OpenTextFile(dsNamex.innerText+".PreShift",1,false,-1);
+		// overwrite existing
+		ftso = fso.OpenTextFile(dsNamex.innerText,2,true,-1);
+
+		do {
+			o = fnReadLn(ftsi);
+			if (o.command == 'POINT' && o.args.length>2) {
+				o.text=o.ctext + " ( " + fnRound(parseFloat(o.args[0]) + scx) + " " + fnRound(parseFloat(o.args[1]) + scy) + " "  + fnRound(parseFloat(o.args[2]) + scz) + " )"
+			}
+			// linear animation
+			if (o.command == 'LINEAR_KEY' && o.args.length>2) {
+				o.text=o.ctext + " ( " + o.args[0] + " " + fnRound(parseFloat(o.args[1]) + scx) + " " + fnRound(parseFloat(o.args[2]) + scy) + " "  + fnRound(parseFloat(o.args[3]) + scz) + " )"
+			}
+			// find "vol_sphere(" and change the next line (the vector and radius)
+			if (o.command == 'VOL_SPHERE') {
+				ftso.WriteLine(o.text);
+				o = fnReadLn(ftsi);
+				if (o.args.length>3) {
+					o.text=o.ctext + " ( " + fnRound(parseFloat(o.args[0]) + scx) + " " + fnRound(parseFloat(o.args[1]) + scy) + " "  + fnRound(parseFloat(o.args[2]) + scz) + " ) " + o.args[4]
+				}
+			}
+
+			ftso.WriteLine(o.text);
+
+		} while (!ftsi.atEndOfStream);
+
+		ftso.Close();
+		ftsi.Close();
+
+		// adjust sd file
+		try {
+			fso.CopyFile(dsNamex.innerText + "d",dsNamex.innerText+"d.PreShift",true);
+			// input file from backup
+			ftsi = fso.OpenTextFile(dsNamex.innerText+"d.PreShift",1,false,-1);
+			// overwrite existing
+			ftso = fso.OpenTextFile(dsNamex.innerText+ "d",2,true,-1);
+
+			do {
+				o = fnReadLn(ftsi);
+
+				if (o.command == 'ESD_BOUNDING_BOX' && o.args.length>5) {
+					o.text=o.ctext + " ( " + fnRound(parseFloat(o.args[0]) + scx) + " " + fnRound(parseFloat(o.args[1]) + scy) + " "  + fnRound(parseFloat(o.args[2]) + scz) + " " + fnRound(parseFloat(o.args[3]) + scx) + " " + fnRound(parseFloat(o.args[4]) + scy) + " "  + fnRound(parseFloat(o.args[5]) + scz) + " )"
+				}
+
+				if (o.command == 'ESD_COMPLEX_BOX' && o.args.length>11) {
+					o.text=o.ctext + " ( " + o.args[0] + " " + o.args[1] + " "  + o.args[2] + " " + fnRound(parseFloat(o.args[3]) + scx) + " " + fnRound(parseFloat(o.args[4]) + scy) + " " + fnRound(parseFloat(o.args[5]) + scz) + " " + o.args[6] + " " + o.args[7] + " " + o.args[8] + " " + o.args[9] + " " + o.args[10] + " " + o.args[11] + " )"
+				}
+
+				ftso.WriteLine(o.text);
+
+			} while (!ftsi.atEndOfStream);
+			ftso.Close();
+			ftsi.Close();
+		} catch(e) {}
+
+		wsh.RegWrite(sPath + "ShiftX", sfx.value,"REG_SZ");
+		wsh.RegWrite(sPath + "ShiftY", sfy.value,"REG_SZ");
+		wsh.RegWrite(sPath + "ShiftZ", sfz.value,"REG_SZ");
+	}	
+
+	divShift.style.display="none";
+	alert("Shift Operation Complete - backup copy in .PreShift file")
+
+}
+
+// sort file name array
+function fnSortName(arrayName) {
+	for (var i=0; i<(arrayName.length-1); i++)
+		for (var j=i+1; j<arrayName.length; j++)
+			if (arrayName[j].name < arrayName[i].name) {
+				var dummy = arrayName[i];
+				arrayName[i] = arrayName[j];
+				arrayName[j] = dummy;
+			}
+}
+
+</Script>
+
+<body Onload="fnInit()" onscroll="fnScroll(divScale)">
+<h1><font size="4">&nbsp;<u>MSTS Shape File Manager Version 2.5</u></font>
+ <input type="button" value="Disclaimer"  onMouseEnter='this.className="o120button"' onMouseLeave='this.className="w120button"' class="w120button" onclick='alert("This software is provided free of charge for any non-commercial purpose.\n\nNo warranty is offered with this product. The authors take no responsibility\nfor any problems arising directly or indirectly from its use.")'>
+ <input type="button" value="Instructions"  onMouseEnter='this.className="o120button"' onMouseLeave='this.className="w120button"' class="w120button" onclick='fnInstruction();'>
+ <input type="button" class="w90button" value="Settings" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' onclick='fnSettings();'>
+ <input type="button" class="w90button" value="EXIT>>" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' onclick='window.close();'><br>
+<font size="1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(freeware from <a href="mailto:decapod@highworth.freeuk.com">Decapod</a>
+- v2.5 updates by <a href="mailto:Huecuvoe@aol.com">Huecuvoe</a>
+- comments welcome - Visit the <a href="http://www.highworth.freeuk.com">MSTS GWR Highworth Branch</a>)<br><br>
+</font>
+</h1>
+
+<p>&nbsp;&nbsp;Drives : 
+<Script language="JavaScript">
+// show the drive buttons
+	var e, s, t, x
+	e = new Enumerator(fso.Drives)
+  	s = ""
+  	for (;!e.atEnd();e.moveNext()) {
+   		x = e.item()
+   		if (x.IsReady) {
+			switch (x.DriveType)
+  			{
+	   		case 0: t = "Unknown"; break
+   			case 1: t = "Removable"; break
+	   		case 2: t = "Fixed"; break
+   			case 3: t = "Network"; break
+   			case 4: t = "CD-ROM"; break
+   			case 5: t = "RAM Disk"; break
+			}
+		document.write("<input type=\"button\" value=\"" + x.DriveLetter + ": (" + t + ")\" onMouseEnter='this.className=\"o120button\"' onMouseLeave='this.className=\"w120button\"' class=\"w120button\" OnClick=\"fnMove('" + x.DriveLetter + ":\\\\')\">&nbsp;&nbsp;")
+		}
+	}
+
+</Script>
+</p>
+<table border="0" width="100%">
+	<tr>
+		<td valign="top" width="30%">
+
+<table border="1" cellspacing="0" id="tblPage">
+	<tr>
+		<td valign="top" align="left">Current Directory </td>
+		<td><input type="button" value="Parent" name="par" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' class="w90button" onMouseLeave='this.className=""' OnClick="fnMove(fso.GetParentFolderName(currDir))"><br><span class=hilite id="oCurrDir"></span></td>
+	</tr>
+	<tr>
+		<td valign="top" align="left">Sub Directories</td>
+		<td><span id="oSubs"></span></td>
+	</tr>
+</table>
+
+	</td>
+	<td width="70%" valign="top">
+		<span id="oFiles"></span>
+	</td>
+	</tr>
+</table>
+
+
+<div class="wnd" id="divSettings" style="left: 36; top: 200; width: 600; height: 200">
+	<p><b>FFEDITC_UNICODE </b><input id=setFFE type="text" size="60"><br>
+	Enter the full path to FFEDITC_UNICODE.EXE (with or without the trailing backslash).<br>
+	Example: <font color="#0000C0"><b><i>E:\TRAINSET\FFEDIT\</i></b></font> or <font color="#0000C0"><b><i>C:\MSTS\UTILS\FFEDIT</font></i></b></p>
+	<p><b>Unicode Editor </b><input id=setUNI type="text" size="64"><br>
+	Enter the executable file name for the Unicode Editor (Default: wordpad.exe).<br>
+	Enter the fully qualified file name if the executable is not on your PATH.<br>
+	Example: <font color="#0000C0"><b><i>MyUnicodeEditor.exe</i></b></font> or <font color="#0000C0"><b><i>C:\My Programs\UniEdit\MyUnicodeEditor.exe</i></b></font></p>
+	<table border="0" width="100%" cellspacing="0" cellpadding="0">
+		<tr>
+			<td width="10%"></td>
+			<td width="40%" align="left"><input id="chx2" type="checkbox" checked="true" value="ON"> <b>Confirm <u>ALL</u> operations</b><br><input id="chx3" type="checkbox" checked="true" value="ON"> <b>Limit File List</b></td>
+			<td width="50%" align="right"><input type="button" value="Save" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' class="w90button" onclick='fnWriteREG()'> <input type="button" value="Reset" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' class="w90button" onclick='fnResetSettings()'> <input type="button" value="Cancel" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' class="w90button" onclick='fnCancelSettings()'></td>
+		</tr>
+	</table>
+</div>
+
+<div class="wnd" id="divScale" style="left: 36; top: 200; width: 450; height: 255">
+	<p><b>SHAPEFILE:</b> <span id="SdsName"></span><br><br><b>ACTION:</b> Scale shape file</p>
+	Scale same in all directions <input id="chx1" type="checkbox" checked="true" value="ON" onclick='yz.style.visibility=(chx1.checked ? "hidden":"visible");'><br>
+	Scale Factor X <input id="sx" type="text" size="10"><br>
+	<span id="yz">Scale Factor Y <input id="sy" type="text" size="10"><br>
+	Scale Factor Z <input id="sz" type="text" size="10"></span><br>
+	<p><i>&nbsp;&nbsp;&nbsp;* A backup will be made before the shape file is scaled *</i></p>
+	<table border="0" width="100%" cellspacing="0" cellpadding="0">
+		<tr>
+			<td width="50%"></td>
+			<td width="50%" align="right"><input type="button" class="w90button" value="OK" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' onclick='fnScaleUpdate()'> <input type="button" value="Cancel" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' class="w90button" onclick='divScale.style.display="none"'></td>
+		</tr>
+	</table>
+	<p style="display: none;"><span id="dsName"></span></p> 
+</div>
+
+<div class="wnd" id="divShift" style="left: 36; top: 200; width: 450; height: 235">
+	<p><b>SHAPEFILE:</b> <span id="SdsNamex"></span><br><br><b>ACTION:</b> Shift shape file</p>
+	Shift X (Width) <input id="sfx" type="text" size="10"><br>
+	Shift Y (Height) <input id="sfy" type="text" size="10"><br>
+	Shift Z (Length) <input id="sfz" type="text" size="10"><br>
+	<p><i>&nbsp;&nbsp;&nbsp;* A backup will be made before the shape file is shifted *</i></p>
+	<table border="0" width="100%" cellspacing="0" cellpadding="0">
+		<tr>
+			<td width="50%"></td>
+			<td width="50%" align="right"><input type="button" class="w90button" value="OK" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' onclick='fnShiftUpdate()'> <input type="button" value="Cancel" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' class="w90button" onclick='divShift.style.display="none"'></td>
+		</tr>
+	</table>
+	<p style="display: none;"><span id="dsNamex"></span></p> 
+</div>
+
+<div class="wnd" id="divTEX" style="left: 36; top: 60; width: 650; height: 200">
+	<p><b>SHAPEFILE:</b> <span id="SdsName2"></span><br><br><b>ACTION:</b> Set texture modes</p>
+	<p><span id="dsTexTab"></span></p>
+	<p><i>&nbsp;&nbsp;&nbsp;* A backup will be made before the adjustment is applied *</i></p>
+	<table border="0" width="100%" cellspacing="0" cellpadding="0">
+		<tr>
+			<td width="50%"></td>
+			<td width="50%" align="right"><input type="button" class="w90button" value="OK" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' onclick='fnTEXUpdate()'> <input type="button" value="Cancel" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' class="w90button" onclick='divTEX.style.display="none"'></td>
+		</tr>
+	</table>
+	<p style="display: none;"><span id="dsName2"></span></p> 
+</div>
+
+<div class="wnd" id="divDL" style="left: 36; top: 60; width: 450; height: 200">
+	<p><b>SHAPEFILE:</b> <span id="SdsName3"></span><br><br><b>ACTION:</b> Set distance levels</p>
+	<p><span id="dsDLTab"></span></p>
+	<p><i>&nbsp;&nbsp;&nbsp;* A backup will be made before the adjustment is applied *</i></p>
+	<table border="0" width="100%" cellspacing="0" cellpadding="0">
+		<tr>
+			<td width="50%"></td>
+			<td width="50%" align="right"><input type="button" class="w90button" value="OK" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' onclick='fnDLUpdate()'> <input type="button" value="Cancel" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' class="w90button" onclick='divDL.style.display="none"'></td>
+		</tr>
+	</table>
+	<p style="display: none;"><span id="dsName3"></span></p> 
+</div>
+
+<div class="wnd" id="divMIP" style="left: 36; top: 60; width: 550; height: 200">
+	<p><b>SHAPEFILE:</b> <span id="SdsName4"></span><br><br><b>ACTION:</b> Set MIP map levels</p>
+	<p><span id="dsMIPTab"></span></p>
+	<p><i>&nbsp;&nbsp;&nbsp;* A backup will be made before the adjustment is applied *</i></p>
+	<table border="0" width="100%" cellspacing="0" cellpadding="0">
+		<tr>
+			<td width="50%"></td>
+			<td width="50%" align="right"><input type="button" class="w90button" value="OK" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' onclick='fnMIPUpdate()'> <input type="button" value="Cancel" onMouseEnter='this.className="o90button"' onMouseLeave='this.className="w90button"' class="w90button" onclick='divMIP.style.display="none"'></td>
+		</tr>
+	</table>
+	<p style="display: none;"><span id="dsName4"></span></p> 
+</div>
+
+<div class="wnd" id="divUncompress" onMouseLeave='this.style.display="none"' style="left:0 ; top:260">
+	<span id="fileUncompressMenu"></span>
+</div>
+
+<div class="wnd" id="divCompress" onMouseLeave='this.style.display="none"' style="left:0 ; top:300">
+	<span id="fileCompressMenu"></span>
+</div>
+<br>
+<br><br><br><br><br><br><br><br><br><br><div id="divHelp" style="display:none">
+<B><font color="#0000c0" size="5">MSTS Shape File Manager Version 2.5 - Help</font></B>
+<p><font color="#FF0000" >** This utility is intended to help MSTS model builders manage shape files. Use
+of this tool by someone unfamiliar with the file management requirements of MSTS may
+result in routes being unable to load. **</font></p>
+<p>The main form behaves much like the Windows Explorer - the left side shows the current folder with a button to navigate up one level to the parent.
+Below the current folders is a list of sub-folders. Selecting one of these makes it the current folder. The Buttons across the top allow navigating to another drive.</p>
+<p>On the right side is a list of shape files contained in the folder including size and
+compression information.  The default is to display a maximum of 600 shape file names.
+The file list is limited because on some systems and under some conditions SFM25 will
+display an error message if there are too many shape files in a folder. This limit can
+be disabled in the SFM25 <font color="#0000c0"><b><i>Settings</i></b></font> dialog. In any case, it is better to run SFM25 on shape
+files in a working folder and not directly on a route installation.</p>
+<p>Click on the <font color="#0000c0"><b><i>Options</i></b></font> button to the right of the shape file name to display the menu of options (actions) that are available for the highlighted target file.</p>
+<p><br><font color="#0000c0">Options for <u><b>COMPRESSED</b></u> files:</font></p><p>
+<font color="#0000c0"><b>Uncompress</b></font> - Call FFEDITC_UNICODE.EXE to uncompress the shape file - may not work on locomotives with animations unless you have the patched NEWSHAPE.BSF file on your system.<br><br>
+<font color="#0000c0"><b>Edit .SD File</b></font> - Edit the .SD file with the configured Unicode editor. If the .SD file does not exist it will be created.</p>
+<p><br><font color="#0000c0">Options for <u><b>UNCOMPRESSED</b></u> files:</font></p><p>
+<font color="#0000c0"><b>Compress</b></font> - Call FFEDITC_UNICODE.EXE to compress the shape file - may not work on locomotives with animations unless you have the patched NEWSHAPE.BSF file on your system.<br><br>
+<font color="#0000c0"><b>Distance Levels</b></font> - Allows changes to the shapes distance levels of detail. Reducing values here help to improve frame rates by not loading the shape at distances over the values entered (where there is only one level). Basically the maximum viewable distance should be proportional to the object size. A backup of the shape file is made with a ".PreDistance" file extension.<br><br>
+<font color="#0000c0"><b>MIP Map Levels</b></font> - Allows changes to the shapes MIP Map levels for textures. Reducing values here may help to improve the appearance of textures and decrease "blurriness" at the expense of increased aliasing and moire. A backup of the shape file is made with a ".PreTexture" file extension.<br><br>
+<font color="#0000c0"><b>Reverse</b></font> - Reverse an object (rotate 180 degrees about the Y axis) by altering the vol_sphere, points, vectors, sort_vectors, matrices and animations sections of the file. Backups of the .S and .SD files are made with a ".PreReverse" file extension.<br><br>
+<font color="#0000c0"><b>Rotate CCW</b></font> - Rotate an object 90 degrees counterclockwise about the Y axis (looking down) by altering the vol_sphere, points, vectors, sort_vectors, matrices and animations sections of the file. Backups of the .S and .SD files are made with a ".PreRotate" file extension.<br><br>
+<font color="#0000c0"><b>Rotate CW</b></font> - Rotate an object 90 degrees clockwise about the Y axis(looking down). Backups of the .S and .SD files are made with a ".PreRotate" file extension.<br><br>
+<font color="#0000c0"><b>Scale</b></font> - Resize an object by altering the vol_sphere, points, vectors, sort_vectors, matrices and animations sections of the file. Backups of the .S and .SD files are made with a ".PreScale" file extension.<br><br>
+<font color="#0000c0"><b>Shift</b></font> - Adjust an objects position relative to its origin (pivot point). The 3 promptsare for the distance moved in metres i.e. 0.05 = 5cm  - positive Y values are up. Backups of the .S and .SD files are made with a  ".PreShift" file extension.<br><br>
+<font color="#0000c0"><b>Texture Mode</b></font> - Allows the user to change the texture mode of the matrices (groups) of objects in a shape file. This option also applies the specular highlight fix for shiny textures. Unless the matrices have been well named, this process can be a bit hit and miss. Backups of the .S and .SD files are made with a ".PreTexture" file extension.<br><br>
+<font color="#0000c0"><b>Edit .S File</b></font> - Edit the .S file with the configured Unicode editor (default WORDPAD.EXE).<br><br>
+<font color="#0000c0"><b>Edit .SD File</b></font> - Edit the .SD file with the configured Unicode editor. If the .SD file does not exist it will be created.</p>
+<p>Note: If a shape data (.SD) file exists, it will be automatically adjusted as part of the Reverse, Rotate, Scale and Shift options.</p>
+<p><br><font color="#0000c0"><b>SETTINGS:</b></font></p>
+<p>The following SFM25 options can be configured in the <font color="#0000c0"><b><i>Settings</i></b></font> dialog:</p>
+<p><font color="#0000c0"><b>FFEDITC_UNICODE.EXE:</b></font> Enter the full path to FFEDITC_UNICODE.EXE (with or without
+the trailing backslash). If no path for FFEDITC_UNICODE.EXE
+has been configured, SFM25 will try and locate it in the
+SFM25 folder or the installation folder for MSTS.</p>
+<p><font color="#0000c0"><b>Unicode Editor:</b></font> By default, SFM25 will use WORDPAD.EXE to edit Unicode files.
+The user can configure an alternate Unicode editor by entering
+the fully qualified pathname. The path name is not required if
+the alternate Unicode editor is on the user's PATH.</p>
+<p><font color="#0000c0"><b>Confirm ALL Operations:</b></font> By default, SFM25 will ask for confirmation before performing
+any operation. If this option is "unchecked", SFM25 will
+immediately COMPRESS, UNCOMPRESS, REVERSE or ROTATE a shape
+file without confirmation. Disabling confirmation may speed up
+multiple operations but increases the risk of a mistake.</p>
+<p><font color="#0000c0"><b>Limit File List:</b></font> By default, SFM25 will limit the file list to a maximum of 600
+names. If this option is "unchecked", SFM25 will not limit the
+file list. Disabling "Limit File List" may result in very slow
+execution and warning or error messages. Your computer may
+become unresponsive or crash completely. It is better to run
+SFM25 on shape files in a working folder and not directly on a
+route installation.</p>
+<p><br><b><font size="4" color="#FF0000">CAUTIONS:<br>
+</font><font color="#FF0000" size="3">
+<p>Shape File Manager is a simple program designed to make relatively simple changes to MSTS
+shape files.  It is NOT a substitute for dedicated 3D modeling software.</p>
+<p>Shape files are very complicated entities and may be corrupted and rendered unusable by
+SFM25. Although SFM25 will normally function properly on "simple" shape files; complicated
+shape files, especially those involving animation, may cause it to fail.  Some shape files
+have defective or incomplete animation specifications and will not ROTATE or REVERSE
+correctly.</p>
+<p>SFM25 must recalculate the surface normals when scaling a shape file using different scale
+factors for X, Y and Z.  This may introduce errors into the shape file that will cause it
+to display incorrectly.  Shape files with animations, particularly rolling stock, are
+especially susceptible to this problem.</p>
+<p>The user is cautioned to <u>ALWAYS</u> make secure backups. </font></b></p>
+<p><br>HISTORY:</p>
+<p> Version 2.5, August 2012 - Options to rotate shape 90 degrees CCW and CW.
+Option to adjust MIP map levels for textures.
+Option to configure alternate Unicode text editor.
+Separate dialog box for settings.
+Algorithm to recalculate normals when scaling shape files.
+Capability to adjust complex bounding boxes.
+Numerous tweaks and fixes to the program and user interface.
+Removed option to adjust WAG and ENG files.
+Dropped compatibility with Windows 9x and ME.
+(Huecuvoe)
+</p>
+<p> Version 2.4a, July 2005 - Some compressed files appeared as unknown.
+</p>
+<p> Version 2.4, Jun 2003 - Attempt to fix Win 98/ME problems and shifting matrix bug
+</p>
+<p> Version 2.3x, Nov 2002 - Correction of object reverse and scaling with negative scale factors by Okrasa Ghia
+</p>
+<p> Version 2.3a, Oct 2002 - Sorted file and directory lists, object reverse (rotate 180 degrees), a few display bug fixes and tried to detect ffeditc_unicode.exe
+</p>
+<p>
+Version 2.2, May 2002 - Added Distance Level adjuster for altering the distance at which shapes change to lower levels or the maximum visible distance.<br>
+2.2a/b - fixed translucency priority bug, 2.2c fixed missing bracket in wag/eng scale update, 2.2d fix problem if read only file is uncompressed.
+<p>
+Version 2.1, May 2002 - Shift option added for adjusting objects positions relative to their pivot point.
+<p>
+Version 2, March 2002 - Corrected scaling for animations, scaling applied to WAG/ENG files (some parameters) and Texture mode for specular highlights.
+</p>
+</div>
+</body>
+</html>
